@@ -1,0 +1,29 @@
+{
+	"FileVersion": 3,
+	"EngineAssociation": "{2EB509FE-4322-D446-F64E-CEA0E36D97D2}",
+	"Category": "",
+	"Description": "",
+	"Modules": [
+		{
+			"Name": "NectoQuest",
+			"Type": "Runtime",
+			"LoadingPhase": "Default"
+		}
+	],
+	"Plugins": [
+		{
+			"Name": "FunctionalTestingEditor",
+			"Enabled": true
+		},
+		{
+			"Name": "VRExpansionPlugin",
+			"Enabled": true
+		}
+	],
+	"TargetPlatforms": [
+		"Android",
+		"WindowsNoEditor",
+		"MacNoEditor",
+		"LinuxAArch64NoEditor"
+	]
+}
