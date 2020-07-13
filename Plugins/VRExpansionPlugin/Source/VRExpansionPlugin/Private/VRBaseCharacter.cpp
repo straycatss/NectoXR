@@ -180,7 +180,7 @@ void AVRBaseCharacter::CacheInitialMeshOffset(FVector MeshRelativeLocation, FRot
 		logOrEnsureNanError(TEXT("ACharacter::PostInitializeComponents detected NaN in BaseRotationOffset! (%s)"), *BaseRotationOffset.ToString());
 	}
 
-	const FRotator LocalRotation = Mesh->GetRelativeRotation();
+	const FRotator LocalRotation = GetMesh()->GetRelativeRotation();
 	if (LocalRotation.ContainsNaN())
 	{
 		logOrEnsureNanError(TEXT("ACharacter::PostInitializeComponents detected NaN in Mesh->RelativeRotation! (%s)"), *LocalRotation.ToString());
