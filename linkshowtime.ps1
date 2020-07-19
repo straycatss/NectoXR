@@ -1,0 +1,1 @@
+﻿New-Item -Path C:\Code\UnrealProjects\NectoXR\Plugins\ShowtimeUnreal -ItemType SymbolicLink -Value C:\Code\Showtime-Cpp\build\bindings\unreal\ShowtimeUnreal
