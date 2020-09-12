@@ -10,6 +10,6 @@ public class NectoQuestTarget : TargetRules
 		Type = TargetType.Game;
 		DefaultBuildSettings = BuildSettingsVersion.V2;
 
-		ExtraModuleNames.AddRange( new string[] { "NectoQuest" } );
+		ExtraModuleNames.AddRange(new string[] { "NectoQuest" });
 	}
 }
