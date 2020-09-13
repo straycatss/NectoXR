@@ -5,7 +5,7 @@
 #include "FakeHandComponent.generated.h"
 
 UCLASS(Blueprintable, meta = (BlueprintSpawnableComponent), ClassGroup = OculusHand)
-class UOculusHandComponent : public UPoseableMeshComponent {
+class UFakeHandComponent : public UPoseableMeshComponent {
 	GENERATED_BODY()
 public:
 	/** The hand skeleton that will be loaded */
