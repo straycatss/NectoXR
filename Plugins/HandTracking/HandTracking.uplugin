@@ -2,7 +2,7 @@
 	"FileVersion": 3,
 	"Version": 1,
 	"VersionName": "1.0",
-	"FriendlyName": "HandTrackingFallback",
+	"FriendlyName": "HandTracking",
 	"Description": "Enable hand tracking on supported platforms ",
 	"Category": "Other",
 	"CreatedBy": "Byron Mallett",
@@ -16,16 +16,14 @@
 	"Installed": false,
 	"Modules": [
 		{
-			"Name": "HandTrackingController",
-			"Type": "Runtime",
-			"LoadingPhase": "Default",
-			"WhiteListPlatforms": [ "Android", "Win64" ]
+		  "Name": "HandTracking",
+		  "Type": "RunTime",
+		  "LoadingPhase": "Default"
 		},
 		{
-			"Name": "HandTrackingFakeController",
-			"Type": "Runtime",
-			"LoadingPhase": "Default",
-			"BlackListPlatforms": [ "Android", "Win64" ]
+		  "Name": "HandPoses",
+		  "Type": "RunTime",
+		  "LoadingPhase": "Default"
 		}
 	],
 	"Plugins": [
@@ -33,6 +31,10 @@
 			"Name": "OculusVR",
 			"Enabled": true,
 			"WhiteListPlatforms": [ "Android", "Win64" ]
+		},
+		{
+			"Name": "VRExpansionPlugin",
+			"Enabled": true
 		}
 	]
 }
