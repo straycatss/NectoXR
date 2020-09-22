@@ -19,7 +19,7 @@ public:
 	virtual void TickComponent(float DeltaTime, enum ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
 	UFUNCTION(BlueprintCallable, Category = "HandProperties")
-	void DumpHandRuntimeSkeletalMesh(USkeletalMesh* mesh = nullptr);
+	static void DumpHandRuntimeSkeletalMesh(USkeletalMesh* lefthand, USkeletalMesh* righthand);
 	 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "HandProperties")
 	USkeletalMesh* RuntimeSkeletalMesh;

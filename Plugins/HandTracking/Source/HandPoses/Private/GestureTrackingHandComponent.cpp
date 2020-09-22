@@ -36,27 +36,48 @@ void UGestureTrackingHandComponent::TickComponent(float DeltaTime, enum ELevelTi
 	UOculusHandComponent::TickComponent(DeltaTime, TickType, ThisTickFunction);
 }
 
-void UGestureTrackingHandComponent::DumpHandRuntimeSkeletalMesh(USkeletalMesh* skeleton){
+void UGestureTrackingHandComponent::DumpHandRuntimeSkeletalMesh(USkeletalMesh* lefthand, USkeletalMesh* righthand){
 
-	USkeletalMesh* skelmesh = (skeleton) ? skeleton : RuntimeSkeletalMesh;
+	if (!lefthand || !righthand)
+		return;
 
-	FString PackageName = TEXT("/Game/RuntimeMeshes");
-	FString MeshName = TEXT("DumpedHandMesh");
+	FString PackageName = TEXT("/HandTracking/Meshes/Hands");
+	FString LeftMeshName = TEXT("LeftHand");
+	FString RightMeshName = TEXT("RightHand");
+
 	UPackage* Package = CreatePackage(NULL, *PackageName);
 
-	USkeletalMesh* NewAsset = DuplicateObject(skelmesh, Package, *MeshName);
-		
-	if (skelmesh != NULL)
+	USkeletalMesh* NewLeftMesh = DuplicateObject(lefthand, Package, *LeftMeshName);
+	USkeletalMesh* NewRightMesh = DuplicateObject(righthand, Package, *RightMeshName);
+	NewLeftMesh->SetFlags(EObjectFlags::RF_Public | EObjectFlags::RF_Standalone);
+	NewRightMesh->SetFlags(EObjectFlags::RF_Public | EObjectFlags::RF_Standalone);
+	
+	NewLeftMesh->Skeleton->SetFlags(EObjectFlags::RF_Public | EObjectFlags::RF_Standalone);
+	NewRightMesh->TagSubobjects(EObjectFlags::RF_Public | EObjectFlags::RF_Standalone);
+
+	if (NewLeftMesh != NULL)
 	{
-		//skelmesh->Rename(*MeshName, Package, REN_Test);
-		NewAsset->MarkPackageDirty();
+		NewLeftMesh->MarkPackageDirty();
+		FAssetRegistryModule::AssetCreated(NewLeftMesh);
+	}
+	if (NewRightMesh != NULL)
+	{
+		NewRightMesh->MarkPackageDirty();
+		FAssetRegistryModule::AssetCreated(NewRightMesh);
 	}
 	FString PackageFileName = FPackageName::LongPackageNameToFilename(PackageName, FPackageName::GetAssetPackageExtension());
 
-	UPackage::SavePackage(Package, NewAsset, EObjectFlags::RF_Public | EObjectFlags::RF_Standalone, *PackageFileName, GError, nullptr, false, true, SAVE_None);
-	UPackage::SavePackage(Package, skelmesh, EObjectFlags::RF_Public | EObjectFlags::RF_Standalone, *PackageFileName, GError, nullptr, false, true, SAVE_None);
+	FSavePackageResultStruct result = UPackage::Save(Package, NewLeftMesh->Skeleton, EObjectFlags::RF_Public | EObjectFlags::RF_Standalone, *PackageFileName, GError, nullptr, false, true, SAVE_None);
+	result = UPackage::Save(Package, NewLeftMesh, EObjectFlags::RF_Public | EObjectFlags::RF_Standalone, *PackageFileName, GError, nullptr, false, true, SAVE_None);
+	if (result.Result != ESavePackageResult::Success) {
+		UE_LOG(LogTemp, Error, TEXT("Failed to save left hand mesh package"));
+	}
 
-	//skelmesh->PreEditChange(NULL);
-	//skelmesh->PostEditChange();
-	//Package->FullyLoad();
+	result = UPackage::Save(Package, NewRightMesh, EObjectFlags::RF_Public | EObjectFlags::RF_Standalone, *PackageFileName, GError, nullptr, false, true, SAVE_None);
+	result = UPackage::Save(Package, NewRightMesh->Skeleton, EObjectFlags::RF_Public | EObjectFlags::RF_Standalone, *PackageFileName, GError, nullptr, false, true, SAVE_None);
+	if (result.Result != ESavePackageResult::Success) {
+		UE_LOG(LogTemp, Error, TEXT("Failed to save right hand mesh package"));
+	}
+
+	Package->FullyLoad();
 }
