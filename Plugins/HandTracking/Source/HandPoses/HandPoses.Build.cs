@@ -59,7 +59,9 @@ public class HandPoses : ModuleRules
         PrivateDependencyModuleNames.AddRange(
             new string[] 
             {
+                "AnimGraph",
                 "AnimGraphRuntime",
+                "BlueprintGraph",
                 "AssetRegistry"
             });
 
