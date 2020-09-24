@@ -163,7 +163,15 @@ void FAnimNode_CopyPoseFromPoseableMesh::GatherDebugData(FNodeDebugData& DebugDa
 	FString DebugLine = DebugData.GetNodeName(this);
 
 	DebugLine += FString::Printf(TEXT("('%s')"), *GetNameSafe(CurrentlyUsedSourceMeshComponent.IsValid() ? CurrentlyUsedSourceMeshComponent.Get()->SkeletalMesh : nullptr));
-	DebugData.AddDebugItem(DebugLine, true);
+	
+	USkinnedMeshComponent* CurrentMeshComponent = CurrentlyUsedSourceMeshComponent.IsValid() ? CurrentlyUsedSourceMeshComponent.Get() : nullptr;
+	if (CurrentMeshComponent) {
+		FString FingerData = TEXT("Hand rotations: ");
+		for (size_t index = 0; index < CurrentMeshComponent->GetComponentSpaceTransforms().Num(); ++index) {
+			//FingerData += FString::Printf(TEXT("  %s\n"), *CurrentMeshComponent->GetComponentSpaceTransforms()[index].GetRotation().ToString());
+		}
+		DebugData.AddDebugItem(FingerData, true);
+	}
 }
 
 void FAnimNode_CopyPoseFromPoseableMesh::ReinitializeMeshComponent(USkinnedMeshComponent* NewSourceMeshComponent, USkinnedMeshComponent* TargetMeshComponent)

@@ -17,12 +17,17 @@
 	"Modules": [
 		{
 		  "Name": "HandTracking",
-		  "Type": "RunTime",
+		  "Type": "Runtime",
 		  "LoadingPhase": "Default"
 		},
 		{
 		  "Name": "HandPoses",
-		  "Type": "RunTime",
+		  "Type": "Runtime",
+		  "LoadingPhase": "Default"
+		},
+		{
+		  "Name": "HandPosesEditor",
+		  "Type": "Editor",
 		  "LoadingPhase": "Default"
 		}
 	],
