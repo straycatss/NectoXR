@@ -24,6 +24,9 @@ struct HANDPOSES_API FAnimNode_CopyPoseFromPoseableMesh : public FAnimNode_Base
 	UPROPERTY(BlueprintReadWrite, transient, Category=Copy, meta=(PinShownByDefault))
 	TWeakObjectPtr<UPoseableMeshComponent> SourceMeshComponent;
 
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = Copy, meta = (PinShownByDefault))
+	mutable TMap<FName, FName> TargetToSourceBoneNameMap;
+
 	FAnimNode_CopyPoseFromPoseableMesh();
 
 	// FAnimNode_Base interface
@@ -47,6 +50,9 @@ private:
 	// cache of target space bases to source space bases
 	TMap<int32, int32> BoneMapToSource;
 	TMap<FName, SmartName::UID_Type> CurveNameToUIDMap;
+
+	// Cached bonename map
+	TMap<FName, FName> CurrentTargetToSourceBoneNamemap;
 
 	// Cached transforms, copied on the game thread
 	TArray<FTransform> SourceMeshTransformArray;

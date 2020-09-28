@@ -19,7 +19,7 @@ void FAnimNode_CopyPoseFromPoseableMesh::Initialize_AnyThread(const FAnimationIn
 
 	// Initial update of the node, so we dont have a frame-delay on setup
 	GetEvaluateGraphExposedInputs().Execute(Context);
-	//RefreshMeshComponent(Context.AnimInstanceProxy->GetSkelMeshComponent());
+	RefreshMeshComponent(Context.AnimInstanceProxy->GetSkelMeshComponent());
 }
 
 void FAnimNode_CopyPoseFromPoseableMesh::CacheBones_AnyThread(const FAnimationCacheBonesContext& Context)
@@ -54,6 +54,9 @@ void FAnimNode_CopyPoseFromPoseableMesh::RefreshMeshComponent(USkinnedMeshCompon
 					ReinitializeMeshComponent(InMeshComponent, InTargetMeshComponent);
 				}
 			}
+			else if (CurrentTargetToSourceBoneNamemap.Num() != TargetToSourceBoneNameMap.Num()) {
+				ReinitializeMeshComponent(InMeshComponent, InTargetMeshComponent);
+			}
 		}
 		// if not valid, but input mesh is
 		else if (!CurrentMeshComponent && InMeshComponent)
@@ -75,8 +78,6 @@ void FAnimNode_CopyPoseFromPoseableMesh::RefreshMeshComponent(USkinnedMeshCompon
 void FAnimNode_CopyPoseFromPoseableMesh::PreUpdate(const UAnimInstance* InAnimInstance)
 {
 	QUICK_SCOPE_CYCLE_COUNTER(FAnimNode_CopyPoseFromPoseableMesh_PreUpdate);
-
-	RefreshMeshComponent(InAnimInstance->GetSkelMeshComponent());
 
 	USkinnedMeshComponent* CurrentMeshComponent = CurrentlyUsedSourceMeshComponent.IsValid() ? CurrentlyUsedSourceMeshComponent.Get() : nullptr;
 
@@ -116,6 +117,7 @@ void FAnimNode_CopyPoseFromPoseableMesh::Update_AnyThread(const FAnimationUpdate
 	// This introduces a frame of latency in setting the pin-driven source component,
 	// but we cannot do the work to extract transforms on a worker thread as it is not thread safe.
 	GetEvaluateGraphExposedInputs().Execute(Context);
+	RefreshMeshComponent(Context.AnimInstanceProxy->GetSkelMeshComponent());
 
 	TRACE_ANIM_NODE_VALUE(Context, TEXT("Component"), *GetNameSafe(CurrentlyUsedSourceMeshComponent.IsValid() ? CurrentlyUsedSourceMeshComponent.Get() : nullptr));
 	TRACE_ANIM_NODE_VALUE(Context, TEXT("Mesh"), *GetNameSafe(CurrentlyUsedSourceMeshComponent.IsValid() ? CurrentlyUsedSourceMeshComponent.Get()->SkeletalMesh : nullptr));
@@ -182,6 +184,7 @@ void FAnimNode_CopyPoseFromPoseableMesh::ReinitializeMeshComponent(USkinnedMeshC
 	CurrentlyUsedTargetMesh.Reset();
 	BoneMapToSource.Reset();
 	CurveNameToUIDMap.Reset();
+	CurrentTargetToSourceBoneNamemap = TargetToSourceBoneNameMap;
 
 	if (TargetMeshComponent && NewSourceMeshComponent && NewSourceMeshComponent->SkeletalMesh && !NewSourceMeshComponent->IsPendingKill())
 	{
@@ -206,8 +209,12 @@ void FAnimNode_CopyPoseFromPoseableMesh::ReinitializeMeshComponent(USkinnedMeshC
 			{
 				for (int32 ComponentSpaceBoneId=0; ComponentSpaceBoneId<TargetSkelMesh->RefSkeleton.GetNum(); ++ComponentSpaceBoneId)
 				{
-					FName BoneName = TargetSkelMesh->RefSkeleton.GetBoneName(ComponentSpaceBoneId);
-					BoneMapToSource.Add(ComponentSpaceBoneId, SourceSkelMesh->RefSkeleton.FindBoneIndex(BoneName));
+					FName BoneName_Target = TargetSkelMesh->RefSkeleton.GetBoneName(ComponentSpaceBoneId);
+					FName* BoneName_Source = CurrentTargetToSourceBoneNamemap.Find(BoneName_Target);
+					FName BoneName = (BoneName_Source) ? *BoneName_Source : BoneName_Target;
+					int32 refboneindex = SourceSkelMesh->RefSkeleton.FindBoneIndex(BoneName);
+
+					BoneMapToSource.Add(ComponentSpaceBoneId, refboneindex);
 				}
 			}
 		}
