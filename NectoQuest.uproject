@@ -1,13 +1,16 @@
 {
 	"FileVersion": 3,
-	"EngineAssociation": "{2EB509FE-4322-D446-F64E-CEA0E36D97D2}",
+	"EngineAssociation": "{91419D43-4FC6-2965-FF5A-70B03884A8C2}",
 	"Category": "",
 	"Description": "",
 	"Modules": [
 		{
 			"Name": "NectoQuest",
 			"Type": "Runtime",
-			"LoadingPhase": "Default"
+			"LoadingPhase": "Default",
+			"AdditionalDependencies": [
+				"VRExpansionPlugin"
+			]
 		}
 	],
 	"Plugins": [
