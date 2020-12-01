@@ -8,9 +8,9 @@ FUBIKSettings UUBIK::Initialize(FUBIKDefaults Defaults, FUBIKCalibrationData Cal
 
 	FUBIKSettings Settings;
 
-	Settings.ArmLength = (Calibration.Height / 2) - Calibration.UpperArmsDistance;
+	Settings.ArmLength = (Calibration.Height / 2.0f) - Calibration.UpperArmsDistance;
 	Settings.LowerArmLength = Settings.ArmLength * LowerArmRatio;
-	Settings.UpperArmLength = Settings.ArmLength * (1 - LowerArmRatio);
+	Settings.UpperArmLength = Settings.ArmLength * (1.0f - LowerArmRatio);
 	Settings.HeadHandAngleLimit = Defaults.HeadHandAngleLimit;
 	Settings.HeadHandAngleLimitDot = FMath::Cos(FMath::DegreesToRadians(Settings.HeadHandAngleLimit));
 
@@ -27,6 +27,8 @@ FUBIKSettings UUBIK::Initialize(FUBIKDefaults Defaults, FUBIKCalibrationData Cal
 	Settings.BaseCharOffset = Defaults.BaseCharOffset;
 	Settings.BodyInterSpeed = Defaults.BodyInterSpeed;
 	Settings.LocalHandOffset = Defaults.LocalHandOffset;
+	Settings.LocalHandRotationOffsetLeft = Defaults.LocalHandRotationOffsetLeft;
+	Settings.LocalHandRotationOffsetRight = Defaults.LocalHandRotationOffsetRight;
 	Settings.ShoulderHeadHandAlpha = Defaults.ShoulderHeadHandAlpha;
 	return Settings;
 }

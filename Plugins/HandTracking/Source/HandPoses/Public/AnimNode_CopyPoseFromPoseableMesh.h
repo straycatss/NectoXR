@@ -22,10 +22,19 @@ struct HANDPOSES_API FAnimNode_CopyPoseFromPoseableMesh : public FAnimNode_Base
 
 	/*  This is used by default if it's valid */
 	UPROPERTY(BlueprintReadWrite, transient, Category=Copy, meta=(PinShownByDefault))
-	TWeakObjectPtr<UPoseableMeshComponent> SourceMeshComponent;
+	TWeakObjectPtr<USkinnedMeshComponent> SourceMeshComponent;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = Copy, meta = (PinShownByDefault))
 	mutable TMap<FName, FName> TargetToSourceBoneNameMap;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = Copy, meta = (PinShownByDefault))
+	bool CopyTranslation = true;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = Copy, meta = (PinShownByDefault))
+	bool CopyRotation = true;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = Copy, meta = (PinShownByDefault))
+	bool CopyScale = true;
 
 	FAnimNode_CopyPoseFromPoseableMesh();
 

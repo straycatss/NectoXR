@@ -148,7 +148,19 @@ void FAnimNode_CopyPoseFromPoseableMesh::Evaluate_AnyThread(FPoseContext& Output
 				{
 					const FTransform& ParentTransform = SourceMeshTransformArray[ParentIndex];
 					const FTransform& ChildTransform = SourceMeshTransformArray[SourceBoneIndex];
-					OutPose[PoseBoneIndex] = ChildTransform.GetRelativeTransform(ParentTransform);
+					FTransform RelativeTransform = ChildTransform.GetRelativeTransform(ParentTransform);
+					FTransform OutTransform = OutPose[PoseBoneIndex];
+
+					if(CopyRotation){
+						OutTransform.SetRotation(RelativeTransform.GetRotation());
+					}
+					if (CopyTranslation) {
+						OutTransform.SetTranslation(RelativeTransform.GetTranslation());
+					}
+					if (CopyScale) {
+						OutTransform.SetScale3D(RelativeTransform.GetScale3D());
+					}
+					OutPose[PoseBoneIndex] = OutTransform;
 				}
 				else
 				{

@@ -1,4 +1,4 @@
-// 2020 Sticky Snout Studio (Jonas Mølgaard)
+// 2020 Sticky Snout Studio (Jonas MÃ¸lgaard)
 
 #include "..\Public\AnimGraphNode_UBIKSolver.h"
 #include "UBIKEditor.h"

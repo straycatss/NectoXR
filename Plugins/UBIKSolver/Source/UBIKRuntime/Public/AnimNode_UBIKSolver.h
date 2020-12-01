@@ -3,10 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Kismet/KismetMathLibrary.h"
 #include "BoneControllers/AnimNode_SkeletalControlBase.h"
-#include "Components/SkeletalMeshComponent.h"
-#include "DrawDebugHelpers.h"
 #include "UBIK.h"
 #include "AnimNode_UBIKSolver.generated.h"
 
@@ -16,184 +13,210 @@
 USTRUCT(BlueprintInternalUseOnly)
 struct UBIKRUNTIME_API FAnimNode_UBIKSolver : public FAnimNode_SkeletalControlBase
 {
-	GENERATED_USTRUCT_BODY()
-
+    GENERATED_BODY()
 public:
-	/** Feed in the HMD transform in WorldSpace. **/
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Default, meta = (PinShownByDefault))
-	FTransform HeadTransformW;
-	
-	/** Feed in the Left MotionController in WorldSpace. **/
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Default, meta = (PinShownByDefault))
-	FTransform LeftHandTransformW;
-	
-	/** Feed in the Right MotionController in WorldSpace. **/
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Default, meta = (PinShownByDefault))
-	FTransform RightHandTransformW;
+    FAnimNode_UBIKSolver();
 
-	/** These settings will be returned by calling the GetUBIKSettings function. **/
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Default, meta = (PinShownByDefault))
-	FUBIKSettings Settings;
+    /** Feed in the HMD transform in WorldSpace. */
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = UBIK, meta = (PinShownByDefault))
+    FTransform InHeadTransformWorld;
 
-	/** Set this to get debug draws of certain internal transforms. Used only for debugging purposes. **/
-	// TODO: Disabled for now, because it crashes engine for some reason.
-	//UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Debug)
-	//bool bDrawDebug = false;
+    /** Feed in the Left MotionController in WorldSpace. */
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = UBIK, meta = (PinShownByDefault))
+    FTransform InLeftHandTransformWorld;
 
-	//** Head bone to modify **/
-	UPROPERTY(EditAnywhere, Category = HeadBone)
-	FBoneReference HeadBoneToModify = FBoneReference("head");
+    /** Feed in the Right MotionController in WorldSpace. */
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = UBIK, meta = (PinShownByDefault))
+    FTransform InRightHandTransformWorld;
 
-	/** Left Clavicle bone to modify **/
-	UPROPERTY(EditAnywhere, Category = ClavicleBone)
-	FBoneReference LeftClavicleBoneToModify = FBoneReference("clavicle_l");
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = UBIK, meta = (PinShownByDefault))
+    bool bApplyHeadTransform;
 
-	/** Right Clavicle Arm bone to modify **/
-	UPROPERTY(EditAnywhere, Category = ClavicleBone)
-	FBoneReference RightClavicleBoneToModify = FBoneReference("clavicle_r");
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = UBIK, meta = (PinShownByDefault))
+    bool bApplyRightHandTransform;
 
-	/** Left Upper Arm bone to modify **/
-	UPROPERTY(EditAnywhere, Category = UpperArm)
-	FBoneReference LeftUpperArmBoneToModify = FBoneReference("upperarm_l");
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = UBIK, meta = (PinShownByDefault))
+    bool bApplyLeftHandTransform;
 
-	/** Right Upper Arm bone to modify **/
-	UPROPERTY(EditAnywhere, Category = UpperArm)
-	FBoneReference RightUpperArmBoneToModify = FBoneReference("upperarm_r");
+    /** By default Pelvis will be driven from Head location with an offset. Set to true to ignore Location. */
+    UPROPERTY(EditAnywhere, Category = UBIK)
+    bool bIgnorePelvisLocation;
 
-	/** Left Lower Arm bone to modify **/
-	UPROPERTY(EditAnywhere, Category = LowerArm)
-	FBoneReference LeftLowerArmBoneToModify = FBoneReference("lowerarm_l");;
+    UPROPERTY(EditAnywhere, Category = UBIK, meta = (InlineEditConditionToggle))
+    bool bApplyBoneAxis;
 
-	/** Right Lower Arm bone to modify **/
-	UPROPERTY(EditAnywhere, Category = LowerArm)
-	FBoneReference RightLowerArmBoneToModify = FBoneReference("lowerarm_r");
+    UPROPERTY(EditAnywhere, Category = UBIK, meta = (EditCondition="bApplyBoneAxis"))
+    TEnumAsByte<EBoneAxis> BoneAxis;
 
-	/** Left Hand bone to modify **/
-	UPROPERTY(EditAnywhere, Category = Hand)
-	FBoneReference LeftHandBoneToModify = FBoneReference("hand_l");
+    /** These settings will be returned by calling the GetUBIKSettings function. */
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = UBIK, meta = (PinShownByDefault))
+    FUBIKSettings Settings;
 
-	/** Right Hand bone to modify **/
-	UPROPERTY(EditAnywhere, Category = Hand)
-	FBoneReference RightHandBoneToModify = FBoneReference("hand_r");
+    //** Head bone to modify */
+    UPROPERTY(EditAnywhere, Category = Bones)
+    FBoneReference HeadBoneToModify = FBoneReference("head");
 
-	//** Spine01 bone to modify **/
-	UPROPERTY(EditAnywhere, Category = Spine)
-	FBoneReference Spine01_BoneToModify = FBoneReference("spine_01");
+    /** Left Clavicle bone to modify */
+    UPROPERTY(EditAnywhere, Category = Bones)
+    FBoneReference LeftClavicleBoneToModify = FBoneReference("clavicle_l");
 
-	//** Spine02 bone to modify **/
-	UPROPERTY(EditAnywhere, Category = Spine)
-	FBoneReference Spine02_BoneToModify = FBoneReference("spine_02");
+    /** Right Clavicle Arm bone to modify */
+    UPROPERTY(EditAnywhere, Category = Bones)
+    FBoneReference RightClavicleBoneToModify = FBoneReference("clavicle_r");
 
-	//** Spine03 bone to modify **/
-	UPROPERTY(EditAnywhere, Category = Spine)
-	FBoneReference Spine03_BoneToModify = FBoneReference("spine_03");
+    /** Left Upper Arm bone to modify */
+    UPROPERTY(EditAnywhere, Category = Bones)
+    FBoneReference LeftUpperArmBoneToModify = FBoneReference("upperarm_l");
 
-	//** Pelvis bone to modify **/
-	UPROPERTY(EditAnywhere, Category = Pelvis)
-	FBoneReference PelvisBoneToModify = FBoneReference("pelvis");
+    /** Right Upper Arm bone to modify */
+    UPROPERTY(EditAnywhere, Category = Bones)
+    FBoneReference RightUpperArmBoneToModify = FBoneReference("upperarm_r");
 
-	/** By default Pelvis will be driven from Head location with an offset. Set to true to ignore Location. **/
-	UPROPERTY(EditAnywhere, Category = Pelvis)
-	bool bIgnoreLocation = false;
+    /** Left Lower Arm bone to modify */
+    UPROPERTY(EditAnywhere, Category = Bones)
+    FBoneReference LeftLowerArmBoneToModify = FBoneReference("lowerarm_l");;
 
-	// FAnimNode_Base interface
-	virtual void GatherDebugData(FNodeDebugData& DebugData) override;
-	// End of FAnimNode_Base interface
+    /** Right Lower Arm bone to modify */
+    UPROPERTY(EditAnywhere, Category = Bones)
+    FBoneReference RightLowerArmBoneToModify = FBoneReference("lowerarm_r");
 
-	// FAnimNode_SkeletalControlBase interface
-	virtual void Initialize_AnyThread(const FAnimationInitializeContext& Context) override;
-	virtual void EvaluateSkeletalControl_AnyThread(FComponentSpacePoseContext& Output, TArray<FBoneTransform>& OutBoneTransforms) override;
-	virtual bool IsValidToEvaluate(const USkeleton* Skeleton, const FBoneContainer& RequiredBones) override;
-	virtual void UpdateInternal(const FAnimationUpdateContext& Context) override;
-	virtual void InitializeBoneReferences(const FBoneContainer& RequiredBones) override;
-	//virtual void CacheBones_AnyThread(const FAnimationCacheBonesContext& Context) override;
-	// End of FAnimNode_SkeletalControlBase interface
+    /** Left Hand bone to modify */
+    UPROPERTY(EditAnywhere, Category = Bones)
+    FBoneReference LeftHandBoneToModify = FBoneReference("hand_l");
 
-private:
-	/** Internal use - Used for interps. */
-	float DeltaTime;
+    /** Right Hand bone to modify */
+    UPROPERTY(EditAnywhere, Category = Bones)
+    FBoneReference RightHandBoneToModify = FBoneReference("hand_r");
 
-	FTransform ComponentSpaceW;
-	FTransform ShoulderTransformW;
-	FTransform LeftUpperArmTransformW;
-	FTransform RightUpperArmTransformW;
-	FTransform LeftLowerArmTransformW;
-	FTransform RightLowerArmTransformW;
+    //** Spine01 bone to modify */
+    UPROPERTY(EditAnywhere, Category = Bones)
+    FBoneReference Spine01_BoneToModify = FBoneReference("spine_01");
 
-	/** Must check if it's valid. Can be null. **/
-	USkeletalMeshComponent* MeshComponent;
-	UWorld* World;
+    //** Spine02 bone to modify */
+    UPROPERTY(EditAnywhere, Category = Bones)
+    FBoneReference Spine02_BoneToModify = FBoneReference("spine_02");
 
-	FTransform HeadTransformC;
-	FTransform LeftHandTransformC;
-	FTransform RightHandTransformC;
-	FTransform ShoulderTransformC;
-	FTransform LeftClavicleC;	// TODO: May be able to turn into a FRotator instead
-	FTransform RightClavicleC;	// TODO: May be able to turn into a FRotator instead
-	FTransform BaseCharTransformC;
-	FTransform LeftUpperArmTransformC;
-	FTransform LeftLowerArmTransformC;
-	FTransform RightUpperArmTransformC;
-	FTransform RightLowerArmTransformC;
+    //** Spine03 bone to modify */
+    UPROPERTY(EditAnywhere, Category = Bones)
+    FBoneReference Spine03_BoneToModify = FBoneReference("spine_03");
 
-	/** WorldSpace inverted **/
-	FTransform ShoulderTransform;
-	FTransform ComponentSpace;
+    //** Pelvis bone to modify */
+    UPROPERTY(EditAnywhere, Category = Bones)
+    FBoneReference PelvisBoneToModify = FBoneReference("pelvis");
 
-	FTransform HeadTransformS;
-	FTransform LeftHandTransformS;
-	FTransform RightHandTransformS;
-	FTransform LeftUpperArmTransformS;
-	FTransform RightUpperArmTransformS;
-	FTransform LeftLowerArmTransformS;
-	FTransform RightLowerArmTransformS;
+    UPROPERTY(EditAnywhere, Category = Debug)
+    bool bDrawDebug;
 
-	float LeftHeadHandAngle;
-	float RightHeadHandAngle;
+    // FAnimNode_Base interface
+    virtual void GatherDebugData(FNodeDebugData& DebugData) override;
+    // End of FAnimNode_Base interface
 
-	float LeftElbowHandAngle;
-	float RightElbowHandAngle;
+    // FAnimNode_SkeletalControlBase interface
+    virtual void Initialize_AnyThread(const FAnimationInitializeContext& Context) override;
+    virtual void EvaluateSkeletalControl_AnyThread(FComponentSpacePoseContext& Output, TArray<FBoneTransform>& OutBoneTransforms) override;
+    virtual bool IsValidToEvaluate(const USkeleton* Skeleton, const FBoneContainer& RequiredBones) override;
+    virtual void UpdateInternal(const FAnimationUpdateContext& Context) override;
+    virtual void InitializeBoneReferences(const FBoneContainer& RequiredBones) override;
+    //virtual void CacheBones_AnyThread(const FAnimationCacheBonesContext& Context) override;
+    // End of FAnimNode_SkeletalControlBase interface
 
 private:
-	FRotator Head;
-	FRotator Spine03;
-	FRotator Spine02;
-	FRotator Spine01;
-	FTransform Pelvis;
-	FRotator Clavicle_l;
-	FRotator UpperArm_l;
-	FRotator LowerArm_l;
-	FRotator Hand_l;
-	FRotator Clavicle_r;
-	FRotator UpperArm_r;
-	FRotator LowerArm_r;
-	FRotator Hand_r;
+
+    TArray<FBoneReference> AllBones;
+
+    UPROPERTY(Transient)
+    USkeletalMeshComponent* SkeletalMeshComponent;
+
+    UPROPERTY(Transient)
+    UWorld* World;
+
+    float CachedDeltaTime;
+private:
+    FTransform LeftHandTransformWorld;
+    FTransform RightHandTransformWorld;
+
+    FTransform ComponentSpaceWorld;
+    FTransform ShoulderTransformWorld;
+    FTransform LeftUpperArmTransformWorld;
+    FTransform RightUpperArmTransformWorld;
+    FTransform LeftLowerArmTransformWorld;
+    FTransform RightLowerArmTransformWorld;
+
+    FTransform HeadTransformComponentSpace;
+    FTransform LeftHandTransformComponentSpace;
+    FTransform RightHandTransformComponentSpace;
+    FTransform ShoulderTransformComponentSpace;
+    FTransform LeftClavicleComponentSpace; // TODO: May be able to turn into a FRotator instead
+    FTransform RightClavicleComponentSpace; // TODO: May be able to turn into a FRotator instead
+    FTransform BaseCharTransformComponentSpace;
+    FTransform LeftUpperArmTransformComponentSpace;
+    FTransform LeftLowerArmTransformComponentSpace;
+    FTransform RightUpperArmTransformComponentSpace;
+    FTransform RightLowerArmTransformComponentSpace;
+
+    /** WorldSpace inverted **/
+    FTransform ShoulderTransform;
+    FTransform ComponentSpace;
+
+    FTransform HeadTransformS;
+    FTransform LeftHandTransformS;
+    FTransform RightHandTransformS;
+    FTransform LeftUpperArmTransformS;
+    FTransform RightUpperArmTransformS;
+    FTransform LeftLowerArmTransformS;
+    FTransform RightLowerArmTransformS;
+
+    float LeftHeadHandAngle;
+    float RightHeadHandAngle;
+
+    float LeftElbowHandAngle;
+    float RightElbowHandAngle;
+
+    FRotator HeadRotation;
+    FRotator Spine03_Rotation;
+    FRotator Spine02_Rotation;
+    FRotator Spine01_Rotation;
+    FTransform PelvisRotation;
+    FRotator ClavicleLRotation;
+    FRotator UpperArmLRotation;
+    FRotator LowerArmLRotation;
+    FRotator HandLRotation;
+    FRotator ClavicleRRotation;
+    FRotator UpperArmRRotation;
+    FRotator LowerArmRRotation;
+    FRotator HandRRotation;
 
 private:
-	void ConvertTransforms();
-	void SetShoulder();
-	FVector GetShoulderLocation();
-	FRotator GetShoulderRotationFromHead();
-	FRotator GetShoulderRotationFromHands();
-	float GetHeadHandAngle(float LastAngle, FVector Hand, FVector HandHeadDelta);
+    void ConvertTransforms();
+    void SetShoulder();
+    FVector GetShoulderLocation();
+    FRotator GetShoulderRotationFromHead();
+    FRotator GetShoulderRotationFromHands();
+    float GetHeadHandAngle(float LastAngle, const FVector& Hand, const FVector& HandHeadDelta);
 
-	void SetLeftUpperArm();
-	void SetRightUpperArm();
-	FTransform RotateUpperArm(bool IsLeftArm, FVector HandTranslation);
+    void SetLeftUpperArm();
+    void SetRightUpperArm();
+    FTransform RotateUpperArm(bool IsLeftArm, const FVector& HandTranslation);
 
-	void ResetUpperArmsLocation();
-	void SolveArms();
-	void SetElbowBasePosition(FVector UpperArm, FVector Hand, bool IsLeftArm, FTransform& UpperArmTransform, FTransform& LowerArmTransform);
-	float RotateElbowByHandPosition(FVector Hand, bool IsLeftArm);
-	float RotateElbowByHandRotation(FTransform LowerArm, FRotator Hand);
-	void RotateElbow(float Angle, FTransform UpperArm, FTransform LowerArm, FVector HandLoc, bool IsLeftArm, FTransform& NewUpperArm, FTransform& NewLowerArm);
+    void ResetUpperArmsLocation();
+    void SolveArms();
+    void SetElbowBasePosition(const FVector& UpperArm, const FVector& Hand, bool bIsLeftArm, FTransform& UpperArmTransform,
+                              FTransform& LowerArmTransform);
+    float RotateElbowByHandPosition(const FVector& Hand, bool bIsLeftArm);
+    float RotateElbowByHandRotation(const FTransform& LowerArm, FRotator Hand);
+    void RotateElbow(float Angle, const FTransform& UpperArm, const FTransform& LowerArm, const FVector& HandLoc, bool bIsLeftArm,
+                     FTransform& NewUpperArm, FTransform& NewLowerArm);
 
-	FTransform GetBaseCharTransform();
+    FTransform GetBaseCharTransform();
 
-	void DrawDebug();
-	void DebugDrawAxes(FTransform Transform, bool DrawAxis = true);
+    void DrawDebug(FAnimInstanceProxy* AnimInstanceProxy);
+    void DebugDrawAxes(FAnimInstanceProxy* AnimInstanceProxy, const FTransform& Transform, bool DrawAxis = true,
+                       FColor SphereColor = FColor::Silver);
 
-	/** The given Transform will only apply Translation if explicitly defined. **/
-	void SetBoneTransform(const FBoneReference& BoneToModify, FTransform Transform, FComponentSpacePoseContext& Output, const FBoneContainer& BoneContainer, bool bApplyRotation, bool bApplyTranslation = false);
+    /** The given Transform will only apply Translation if explicitly defined. */
+    void SetBoneTransform(TArray<FBoneTransform>& OutBoneTransforms, const FBoneReference& BoneToModify, const FTransform& InTransform,
+                          FComponentSpacePoseContext& Output, const FBoneContainer& BoneContainer, bool bApplyRotation,
+                          bool bApplyTranslation = false);
+
+    FVector GetAxisVector(const EBoneAxis Axis) const;
 };
-

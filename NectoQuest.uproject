@@ -21,6 +21,10 @@
 		{
 			"Name": "VRExpansionPlugin",
 			"Enabled": true
+		},
+		{
+			"Name": "HandTracking",
+			"Enabled": true
 		}
 	],
 	"TargetPlatforms": [
