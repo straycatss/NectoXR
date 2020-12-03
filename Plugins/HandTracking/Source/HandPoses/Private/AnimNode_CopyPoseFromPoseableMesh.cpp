@@ -54,7 +54,7 @@ void FAnimNode_CopyPoseFromPoseableMesh::RefreshMeshComponent(USkinnedMeshCompon
 					ReinitializeMeshComponent(InMeshComponent, InTargetMeshComponent);
 				}
 			}
-			else if (CurrentTargetToSourceBoneNamemap.Num() != TargetToSourceBoneNameMap.Num()) {
+			else if (CurrentTargetFromSourceBoneOptions.Num() != TargetBoneFromSourceBoneOptions.Num()) {
 				ReinitializeMeshComponent(InMeshComponent, InTargetMeshComponent);
 			}
 		}
@@ -99,6 +99,8 @@ void FAnimNode_CopyPoseFromPoseableMesh::PreUpdate(const UAnimInstance* InAnimIn
 
 			// Copy source array from the appropriate location
 			SourceMeshTransformArray.Reset();
+			
+
 			SourceMeshTransformArray.Append((bUROInSync || bUsingExternalInterpolation) && bArraySizesMatch ? CachedComponentSpaceTransforms : CurrentMeshComponent->GetComponentSpaceTransforms());
 
 			// Ref skeleton is need for parent index lookups later, so store it now
@@ -129,6 +131,7 @@ void FAnimNode_CopyPoseFromPoseableMesh::Evaluate_AnyThread(FPoseContext& Output
 	FCompactPose& OutPose = Output.Pose;
 	OutPose.ResetToRefPose();
 	USkeletalMesh* CurrentMesh = CurrentlyUsedMesh.IsValid() ? CurrentlyUsedMesh.Get() : nullptr;
+
 	if(SourceMeshTransformArray.Num() > 0 && CurrentMesh)
 	{
 		const FBoneContainer& RequiredBones = OutPose.GetBoneContainer();
@@ -137,34 +140,76 @@ void FAnimNode_CopyPoseFromPoseableMesh::Evaluate_AnyThread(FPoseContext& Output
 		{
 			const int32 SkeletonBoneIndex = RequiredBones.GetSkeletonIndex(PoseBoneIndex);
 			const int32 MeshBoneIndex = RequiredBones.GetSkeletonToPoseBoneIndexArray()[SkeletonBoneIndex];
-			const int32* Value = BoneMapToSource.Find(MeshBoneIndex);
-			if(Value && SourceMeshTransformArray.IsValidIndex(*Value))
-			{
-				const int32 SourceBoneIndex = *Value;
-				const int32 ParentIndex = CurrentMesh->RefSkeleton.GetParentIndex(SourceBoneIndex);
-				const FCompactPoseBoneIndex MyParentIndex = RequiredBones.GetParentBoneIndex(PoseBoneIndex);
-				// only apply if I also have parent, otherwise, it should apply the space bases
-				if (SourceMeshTransformArray.IsValidIndex(ParentIndex) && MyParentIndex != INDEX_NONE)
-				{
-					const FTransform& ParentTransform = SourceMeshTransformArray[ParentIndex];
-					const FTransform& ChildTransform = SourceMeshTransformArray[SourceBoneIndex];
-					FTransform RelativeTransform = ChildTransform.GetRelativeTransform(ParentTransform);
-					FTransform OutTransform = OutPose[PoseBoneIndex];
+			const FCopyPoseBoneOptions* BoneOptions = BoneMapToSource.Find(MeshBoneIndex);
 
-					if(CopyRotation){
-						OutTransform.SetRotation(RelativeTransform.GetRotation());
-					}
-					if (CopyTranslation) {
-						OutTransform.SetTranslation(RelativeTransform.GetTranslation());
-					}
-					if (CopyScale) {
-						OutTransform.SetScale3D(RelativeTransform.GetScale3D());
-					}
-					OutPose[PoseBoneIndex] = OutTransform;
-				}
-				else
+			if (BoneOptions) {
+				if (SourceMeshTransformArray.IsValidIndex(BoneOptions->SourceBoneIndex))
 				{
-					OutPose[PoseBoneIndex] = SourceMeshTransformArray[SourceBoneIndex];
+					const int32 SourceBoneIndex = BoneOptions->SourceBoneIndex;
+					
+					FTransform OutTransform = OutPose[PoseBoneIndex];
+					FTransform SourceTransform;
+					ECopyTransformSpace TransformSpace = (BoneOptions->OverrideCopyTransformSpace != ECopyTransformSpace::None) ? BoneOptions->OverrideCopyTransformSpace : CopyTransformSpace;
+					const int32 ParentIndex = (BoneOptions->ParentBoneIndex >= 0) ? BoneOptions->ParentBoneIndex : CurrentMesh->RefSkeleton.GetParentIndex(SourceBoneIndex);
+
+					const FCompactPoseBoneIndex MyParentIndex = RequiredBones.GetParentBoneIndex(PoseBoneIndex);
+
+					switch (TransformSpace) {
+					case ECopyTransformSpace::CopyInParentSpace:
+					{
+						// only apply if I also have parent, otherwise, it should apply the space bases
+						if (SourceMeshTransformArray.IsValidIndex(ParentIndex) && MyParentIndex != INDEX_NONE)
+						{
+							const FTransform& ParentTransform = SourceMeshTransformArray[ParentIndex];
+							const FTransform& ChildTransform = SourceMeshTransformArray[SourceBoneIndex];
+							FTransform RelativeTransform = ChildTransform.GetRelativeTransform(ParentTransform);
+							SourceTransform = RelativeTransform;
+						}
+						else
+						{
+							SourceTransform = SourceMeshTransformArray[SourceBoneIndex];
+						}
+						break;
+					}
+					case ECopyTransformSpace::CopyInLocalSpace:
+						SourceTransform = SourceMeshTransformArray[SourceBoneIndex];
+						break;
+					case ECopyTransformSpace::CopyInComponentSpace:
+						SourceTransform = SourceMeshTransformArray[SourceBoneIndex];
+						break;
+					case ECopyTransformSpace::CopyInInWorldSpace:
+					{
+						FTransform SourceWorldTransform = CurrentlyUsedSourceMeshComponent->GetComponentTransform() + SourceMeshTransformArray[SourceBoneIndex];
+
+						FVector loc;
+						FRotator rot;
+						Output.AnimInstanceProxy->GetSkelMeshComponent()->TransformToBoneSpace(
+							Output.AnimInstanceProxy->GetSkelMeshComponent()->SkeletalMesh->RefSkeleton.GetBoneName(PoseBoneIndex.GetInt()), 
+							SourceWorldTransform.GetLocation(), 
+							SourceWorldTransform.GetRotation().Rotator(), 
+							loc, 
+							rot
+						);
+
+						SourceTransform.SetLocation(loc);
+						SourceTransform.SetRotation(rot.Quaternion());
+						break;
+					}
+					default:
+						break;
+					}
+
+					if (BoneOptions->CopyableTransformsFlags & static_cast<uint8>(ECopyableTransforms::kCopyRotation)) {
+						OutTransform.SetRotation(SourceTransform.GetRotation());
+					}
+					if (BoneOptions->CopyableTransformsFlags & static_cast<uint8>(ECopyableTransforms::kCopyTranslation)) {
+						OutTransform.SetTranslation(SourceTransform.GetTranslation());
+					}
+					if (BoneOptions->CopyableTransformsFlags & static_cast<uint8>(ECopyableTransforms::kCopyScale)) {
+						OutTransform.SetScale3D(SourceTransform.GetScale3D());
+					}
+
+					OutPose[PoseBoneIndex] = OutTransform;
 				}
 			}
 		}
@@ -196,7 +241,7 @@ void FAnimNode_CopyPoseFromPoseableMesh::ReinitializeMeshComponent(USkinnedMeshC
 	CurrentlyUsedTargetMesh.Reset();
 	BoneMapToSource.Reset();
 	CurveNameToUIDMap.Reset();
-	CurrentTargetToSourceBoneNamemap = TargetToSourceBoneNameMap;
+	CurrentTargetFromSourceBoneOptions = TargetBoneFromSourceBoneOptions;
 
 	if (TargetMeshComponent && NewSourceMeshComponent && NewSourceMeshComponent->SkeletalMesh && !NewSourceMeshComponent->IsPendingKill())
 	{
@@ -210,23 +255,57 @@ void FAnimNode_CopyPoseFromPoseableMesh::ReinitializeMeshComponent(USkinnedMeshC
 			CurrentlyUsedSourceMesh = SourceSkelMesh;
 			CurrentlyUsedTargetMesh = TargetSkelMesh;
 
+			ECopyableTransforms DefaultCopyableTransformFlags;
+			DefaultCopyableTransformFlags |= ECopyableTransforms::kCopyTranslation;
+			DefaultCopyableTransformFlags |= ECopyableTransforms::kCopyRotation;
+			DefaultCopyableTransformFlags |= ECopyableTransforms::kCopyScale;
+
+			FName BoneName_Target;
+			int32 ParentIndex = -1;
+
 			if (SourceSkelMesh == TargetSkelMesh)
 			{
 				for(int32 ComponentSpaceBoneId = 0; ComponentSpaceBoneId < SourceSkelMesh->RefSkeleton.GetNum(); ++ComponentSpaceBoneId)
 				{
-					BoneMapToSource.Add(ComponentSpaceBoneId, ComponentSpaceBoneId);
+					BoneName_Target = TargetSkelMesh->RefSkeleton.GetBoneName(ComponentSpaceBoneId);
+					int32 SourceBoneIndex = SourceSkelMesh->RefSkeleton.FindBoneIndex(BoneName_Target);
+
+					FCopyPoseBoneOptions boneoptions{ 
+						TargetSkelMesh->RefSkeleton.GetBoneName(ComponentSpaceBoneId),
+						static_cast<uint8>(DefaultCopyableTransformFlags), 
+						ECopyTransformSpace::None,
+						NAME_None,
+						SourceBoneIndex,
+						ParentIndex
+					};
+					BoneMapToSource.Add(ComponentSpaceBoneId, boneoptions);
 				}
 			}
 			else
 			{
 				for (int32 ComponentSpaceBoneId=0; ComponentSpaceBoneId<TargetSkelMesh->RefSkeleton.GetNum(); ++ComponentSpaceBoneId)
 				{
-					FName BoneName_Target = TargetSkelMesh->RefSkeleton.GetBoneName(ComponentSpaceBoneId);
-					FName* BoneName_Source = CurrentTargetToSourceBoneNamemap.Find(BoneName_Target);
-					FName BoneName = (BoneName_Source) ? *BoneName_Source : BoneName_Target;
-					int32 refboneindex = SourceSkelMesh->RefSkeleton.FindBoneIndex(BoneName);
+					BoneName_Target = TargetSkelMesh->RefSkeleton.GetBoneName(ComponentSpaceBoneId);
+					int32 SourceBoneIndex = SourceSkelMesh->RefSkeleton.FindBoneIndex(BoneName_Target);
 
-					BoneMapToSource.Add(ComponentSpaceBoneId, refboneindex);
+					FCopyPoseBoneOptions* BoneCopyOptions = CurrentTargetFromSourceBoneOptions.Find(BoneName_Target);
+					if (BoneCopyOptions) {
+						BoneCopyOptions->ParentBoneIndex = (!BoneCopyOptions->OverrideSourceBoneParent.IsNone()) ? SourceSkelMesh->RefSkeleton.FindBoneIndex(BoneCopyOptions->OverrideSourceBoneParent) : ParentIndex;
+						BoneCopyOptions->SourceBoneIndex = SourceSkelMesh->RefSkeleton.FindBoneIndex(BoneCopyOptions->SourceBone);
+						BoneMapToSource.Add(ComponentSpaceBoneId, *BoneCopyOptions);
+					}
+					else {
+						// No bone found
+						FCopyPoseBoneOptions boneoptions{ 
+							TargetSkelMesh->RefSkeleton.GetBoneName(ComponentSpaceBoneId), 
+							static_cast<uint8>(DefaultCopyableTransformFlags),
+							ECopyTransformSpace::None,
+							NAME_None,
+							SourceSkelMesh->RefSkeleton.FindBoneIndex(BoneName_Target),
+							ParentIndex
+						};
+						BoneMapToSource.Add(ComponentSpaceBoneId, boneoptions);
+					}
 				}
 			}
 		}
