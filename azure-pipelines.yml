@@ -11,13 +11,12 @@ pool:
 
 steps:
 - script: |
-    sudo apt-get install python3 python3-dev python3-pip python3-setuptools
-
-    sudo pip3 install ue4-docker
-    sudo ue4-docker setup
-
-    ue4-docker build 4.26.0 --no-engine
-    ue4-docker clean --source
-    # ue4 build
-
+  # aaaa
+  
   displayName: 'Setup ue4 docker'
+  
+- task: Docker@2
+  inputs:
+    repository: 'https://github.com/adamrehn/ue4-docker.git'
+    command: 'build'
+    Dockerfile: '**/ue4docker/dockerfiles/ue4-full/linux/Dockerfile'
