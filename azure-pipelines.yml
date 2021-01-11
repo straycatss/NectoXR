@@ -8,13 +8,17 @@ trigger:
 
 pool:
   vmImage: 'ubuntu-latest'
+  
+variables:
+  DOCKER_BUILDKIT: 1
 
 steps:
 - script: |
-  # aaaa
+  git clone https://github.com/adamrehn/ue4-docker.git
   
-  displayName: 'Setup ue4 docker'
+  displayName: 'Clone UE4 dockerfile'
   
+
 - task: Docker@2
   inputs:
     repository: 'https://github.com/adamrehn/ue4-docker.git'
