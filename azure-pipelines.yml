@@ -13,14 +13,10 @@ variables:
   DOCKER_BUILDKIT: 1
 
 steps:
-- script: |
-  git clone https://github.com/adamrehn/ue4-docker.git
-  
+- script: git clone https://github.com/adamrehn/ue4-docker.git
   displayName: 'Clone UE4 dockerfile'
-  
 
 - task: Docker@2
   inputs:
-    repository: 'https://github.com/adamrehn/ue4-docker.git'
     command: 'build'
     Dockerfile: '**/ue4docker/dockerfiles/ue4-full/linux/Dockerfile'
