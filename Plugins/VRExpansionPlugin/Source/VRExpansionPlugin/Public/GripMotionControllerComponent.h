@@ -47,6 +47,9 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FVROnControllerGripSignature, const 
 /** Delegate for notification when the controller drops a gripped object. */
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FVROnControllerDropSignature, const FBPActorGripInformation &, GripInformation, bool, bWasSocketed);
 
+/** Delegate for notification when the controller teleports its grips. */
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FVROnControllerTeleportedGripsSignature);
+
 /** Delegate for notification when an interactive grip goes out of range and isn't set to auto handle it. */
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FVRGripControllerOnGripOutOfRange, const FBPActorGripInformation &, GripInformation, float, Distance);
 
@@ -180,6 +183,26 @@ public:
 	FVector LastLocationForLateUpdate;
 	FTransform LastRelativePosition;
 
+	// If true will smooth the hand tracking data with a TInterp function
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "GripMotionController|Smoothing")
+		bool bSmoothHandTracking;
+
+	bool bWasSmoothingHand;
+
+	// If true will smooth hand tracking with the Linear and Rotational 1 Euro low pass settings instead
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "GripMotionController|Smoothing")
+		bool bSmoothWithEuroLowPassFunction;
+
+	// The interp speed to use if smoothing is enabled and not using the 1 Euro smoothing
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "GripMotionController|Smoothing")
+		float SmoothingSpeed;
+
+	// Smoothing parameters when using the 1 Euro low pass option
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "GripMotionController|Smoothing")
+		FBPEuroLowPassFilterTrans EuroSmoothingParams;
+
+	FTransform LastSmoothRelativeTransform;
+
 	// Type of velocity calculation to use for the motion controller
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "GripMotionController|ComponentVelocity")
 		EVRVelocityType VelocityCalculationType;
@@ -234,8 +257,8 @@ public:
 	virtual void BeginPlay() override;
 
 	/** Post-physics tick function for this character */
-	UPROPERTY()
-		FTickFunction PostPhysicsTickFunction;
+	//UPROPERTY()
+	//	FTickFunction PostPhysicsTickFunction;
 
 protected:
 	//~ Begin UActorComponent Interface.
@@ -265,6 +288,10 @@ public:
 	// Called when a object is dropped
 	UPROPERTY(BlueprintAssignable, Category = "Grip Events")
 		FVROnControllerDropSignature OnDroppedObject;
+
+	// Called when a gripped object has been teleported
+	UPROPERTY(BlueprintAssignable, Category = "Grip Events")
+		FVROnControllerTeleportedGripsSignature OnTeleportedGrips;
 
 	// Called when an object we hold is secondary gripped
 	UPROPERTY(BlueprintAssignable, Category = "Grip Events")
@@ -363,7 +390,7 @@ public:
 	// Locally Gripped Array functions
 
 	// Notify a client that their local grip was bad
-	UFUNCTION(Reliable, Client, WithValidation, Category = "GripMotionController")
+	UFUNCTION(Reliable, Client, Category = "GripMotionController")
 	void Client_NotifyInvalidLocalGrip(UObject * LocallyGrippedObject, uint8 GripID);
 
 	// Notify the server that we locally gripped something
@@ -454,6 +481,39 @@ public:
 				//UE_LOG(LogVRMotionController, Warning, TEXT("Replicated grip Notify grip failed, was grip called before the object was replicated to the client?"));
 				return false;
 			}
+
+			if(Grip.SecondaryGripInfo.bHasSecondaryAttachment)
+			{
+				// Reset the secondary grip distance
+				Grip.SecondaryGripInfo.SecondaryGripDistance = 0.0f;
+
+				if (FMath::IsNearlyZero(Grip.SecondaryGripInfo.LerpToRate)) // Zero, could use IsNearlyZero instead
+					Grip.SecondaryGripInfo.GripLerpState = EGripLerpState::NotLerping;
+				else
+				{
+					Grip.SecondaryGripInfo.curLerp = Grip.SecondaryGripInfo.LerpToRate;
+					Grip.SecondaryGripInfo.GripLerpState = EGripLerpState::StartLerp;
+				}
+
+				if (Grip.GrippedObject && Grip.GrippedObject->IsValidLowLevelFast() && Grip.GrippedObject->GetClass()->ImplementsInterface(UVRGripInterface::StaticClass()))
+				{
+					IVRGripInterface::Execute_OnSecondaryGrip(Grip.GrippedObject, this, Grip.SecondaryGripInfo.SecondaryAttachment, Grip);
+
+					TArray<UVRGripScriptBase*> GripScripts;
+					if (IVRGripInterface::Execute_GetGripScripts(Grip.GrippedObject, GripScripts))
+					{
+						for (UVRGripScriptBase* Script : GripScripts)
+						{
+							if (Script)
+							{
+								Script->OnSecondaryGrip(this, Grip.SecondaryGripInfo.SecondaryAttachment, Grip);
+							}
+						}
+					}
+				}
+
+				OnSecondaryGripAdded.Broadcast(Grip);	
+			}
 			//Grip.ValueCache.bWasInitiallyRepped = true; // Set has been initialized
 		}
 		else if(OldGripInfo != nullptr) // Check for changes from cached information if we aren't skipping the delta check
@@ -492,7 +552,7 @@ public:
 
 				if (bSendReleaseEvent)
 				{
-					if (Grip.GrippedObject->IsValidLowLevelFast() && Grip.GrippedObject->GetClass()->ImplementsInterface(UVRGripInterface::StaticClass()))
+					if (Grip.GrippedObject && Grip.GrippedObject->IsValidLowLevelFast() && Grip.GrippedObject->GetClass()->ImplementsInterface(UVRGripInterface::StaticClass()))
 					{
 						IVRGripInterface::Execute_OnSecondaryGripRelease(Grip.GrippedObject, this, OldGripInfo->SecondaryGripInfo.SecondaryAttachment, Grip);
 
@@ -514,7 +574,7 @@ public:
 
 				if (bSendGripEvent)
 				{
-					if (Grip.GrippedObject->IsValidLowLevelFast() && Grip.GrippedObject->GetClass()->ImplementsInterface(UVRGripInterface::StaticClass()))
+					if (Grip.GrippedObject && Grip.GrippedObject->IsValidLowLevelFast() && Grip.GrippedObject->GetClass()->ImplementsInterface(UVRGripInterface::StaticClass()))
 					{
 						IVRGripInterface::Execute_OnSecondaryGrip(Grip.GrippedObject, this, Grip.SecondaryGripInfo.SecondaryAttachment, Grip);
 
@@ -909,6 +969,10 @@ public:
 	UFUNCTION(BlueprintPure, Category = "GripMotionController")
 		void GetPhysicsVelocities(const FBPActorGripInformation &Grip, FVector &AngularVelocity, FVector &LinearVelocity);
 
+	// Get the physics constraint force of a simulating grip
+	UFUNCTION(BlueprintCallable, Category = "GripMotionController")
+		bool GetPhysicsConstraintForce(const FBPActorGripInformation& Grip, FVector& AngularForce, FVector& LinearForce);
+
 	// Get the root components mass of a grip
 	UFUNCTION(BlueprintPure, Category = "GripMotionController")
 		void GetGripMass(const FBPActorGripInformation& Grip, float& Mass);
@@ -1006,7 +1070,7 @@ public:
 	// Returns if we have grip authority (can call drop / grip on this grip)
 	// Mostly for networked games as local grips are client authed and all others are server authed
 	UFUNCTION(BlueprintPure, Category = "GripMotionController", meta = (DisplayName = "HasGripAuthority"))
-		bool BP_HasGripAuthority(const FBPActorGripInformation &Grip);
+		bool BP_HasGripAuthority(const FBPActorGripInformation & Grip);
 
 	// Returns if we have grip authority (can call drop / grip on this grip)
 	// Mostly for networked games as local grips are client authed and all others are server authed
@@ -1014,12 +1078,12 @@ public:
 		bool BP_HasGripAuthorityForObject(const UObject* ObjToCheck);
 
 	// Checks if we should be handling the movement of a grip based on settings for it
-	inline bool HasGripMovementAuthority(const FBPActorGripInformation &Grip);
+	inline bool HasGripMovementAuthority(const FBPActorGripInformation & Grip);
 
 	// Returns if we have grip movement authority (we handle movement of the grip)
 	// Mostly for networked games where ClientSide will be true for all and ServerSide will be true for server only
 	UFUNCTION(BlueprintPure, Category = "GripMotionController", meta = (DisplayName = "HasGripMovementAuthority"))
-		bool BP_HasGripMovementAuthority(const FBPActorGripInformation &Grip);
+		bool BP_HasGripMovementAuthority(const FBPActorGripInformation & Grip);
 
 	// Running the gripping logic in its own function as the main tick was getting bloated
 	void TickGrip(float DeltaTime);
@@ -1104,6 +1168,10 @@ public:
 	bool TeleportMoveGrip(UPARAM(ref)FBPActorGripInformation &Grip, bool bTeleportPhysicsGrips = true, bool bIsForPostTeleport = false);
 	bool TeleportMoveGrip_Impl(FBPActorGripInformation &Grip, bool bTeleportPhysicsGrips, bool bIsForPostTeleport, FTransform & OptionalTransform);
 
+	// Moves all grips back into position immediately
+	UFUNCTION(BlueprintCallable, Category = "GripMotionController")
+		void TeleportMoveGrips(bool bTeleportPhysicsGrips = true, bool bIsForPostTeleport = false);
+
 	// Adds a secondary attachment point to the grip
 	UFUNCTION(BlueprintCallable, Category = "GripMotionController")
 	bool AddSecondaryAttachmentPoint(UObject * GrippedObjectToAddAttachment, USceneComponent * SecondaryPointComponent, const FTransform &OriginalTransform, bool bTransformIsAlreadyRelative = false, float LerpToTime = 0.25f, bool bIsSlotGrip = false, FName SecondarySlotName = NAME_None);
@@ -1112,6 +1180,9 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "GripMotionController")
 	bool AddSecondaryAttachmentToGrip(const FBPActorGripInformation & GripToAddAttachment, USceneComponent * SecondaryPointComponent, const FTransform &OriginalTransform, bool bTransformIsAlreadyRelative = false, float LerpToTime = 0.25f, bool bIsSlotGrip = false, FName SecondarySlotName = NAME_None);
 
+	// Adds a secondary attachment point to the grip
+	UFUNCTION(BlueprintCallable, Category = "GripMotionController")
+		bool AddSecondaryAttachmentToGripByID(const uint8 GripID, USceneComponent* SecondaryPointComponent, const FTransform& OriginalTransform, bool bTransformIsAlreadyRelative = false, float LerpToTime = 0.25f, bool bIsSlotGrip = false, FName SecondarySlotName = NAME_None);
 
 	// Removes a secondary attachment point from a grip
 	UFUNCTION(BlueprintCallable, Category = "GripMotionController")
@@ -1120,6 +1191,10 @@ public:
 	// Removes a secondary attachment point from a grip
 	UFUNCTION(BlueprintCallable, Category = "GripMotionController")
 		bool RemoveSecondaryAttachmentFromGrip(const FBPActorGripInformation & GripToRemoveAttachment, float LerpToTime = 0.25f);
+
+	// Removes a secondary attachment point from a grip
+	UFUNCTION(BlueprintCallable, Category = "GripMotionController")
+		bool RemoveSecondaryAttachmentFromGripByID(const uint8 GripID = 0, float LerpToTime = 0.25f);
 
 	// This is for testing, setting it to true allows you to test grip with a non VR enabled pawn
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "GripMotionController")

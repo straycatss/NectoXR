@@ -2,7 +2,9 @@
 #include "SceneManagement.h"
 #include "Components/SkeletalMeshComponent.h"
 #include "PhysicsEngine/PhysicsAsset.h"
+#if PHYSICS_INTERFACE_PHYSX
 #include "PhysXPublic.h"
+#endif
 #include "ReferenceSkeleton.h"
 #include "DrawDebugHelpers.h"
 #include "Physics/PhysicsInterfaceCore.h"
@@ -106,7 +108,7 @@ void UVREPhysicalAnimationComponent::SetupWeldedBoneDriver_Implementation(bool b
 	if (PhysAsset && SkeleMesh->SkeletalMesh)
 	{
 
-#if WITH_PHYSX
+//#if PHYSICS_INTERFACE_PHYSX
 		for (FName BaseWeldedBoneDriverName : BaseWeldedBoneDriverNames)
 		{
 			int32 ParentBodyIdx = PhysAsset->FindBodyIndex(BaseWeldedBoneDriverName);
@@ -126,7 +128,12 @@ void UVREPhysicalAnimationComponent::SetupWeldedBoneDriver_Implementation(bool b
 
 						for (FPhysicsShapeHandle& Shape : Shapes)
 						{
+
+#if WITH_CHAOS 
+							FKShapeElem* ShapeElem = FChaosUserData::Get<FKShapeElem>(FPhysicsInterface::GetUserData(Shape));
+#elif PHYSICS_INTERFACE_PHYSX
 							FKShapeElem* ShapeElem = FPhysxUserData::Get<FKShapeElem>(FPhysicsInterface::GetUserData(Shape));
+#endif
 
 							if (ShapeElem)
 							{
@@ -176,7 +183,7 @@ void UVREPhysicalAnimationComponent::SetupWeldedBoneDriver_Implementation(bool b
 				}
 			}
 		}
-#endif
+//#endif
 	}
 }
 
@@ -208,9 +215,6 @@ void UVREPhysicalAnimationComponent::UpdateWeldedBoneDriver(float DeltaTime)
 	UPhysicsAsset* PhysAsset = SkeleMesh ? SkeleMesh->GetPhysicsAsset() : nullptr;
 	if(PhysAsset && SkeleMesh->SkeletalMesh)
 	{
-
-#if WITH_PHYSX
-
 		for (FName BaseWeldedBoneDriverName : BaseWeldedBoneDriverNames)
 		{
 			int32 ParentBodyIdx = PhysAsset->FindBodyIndex(BaseWeldedBoneDriverName);
@@ -232,7 +236,7 @@ void UVREPhysicalAnimationComponent::UpdateWeldedBoneDriver(float DeltaTime)
 						FPhysicsInterface::GetAllShapes_AssumedLocked(Actor, Shapes);
 
 						FTransform GlobalPose = FPhysicsInterface::GetGlobalPose_AssumesLocked(ActorHandle).Inverse();
-
+						
 						for (FPhysicsShapeHandle& Shape : Shapes)
 						{
 							if (FWeldedBoneDriverData* WeldedData = BoneDriverMap.FindByKey(Shape))
@@ -240,9 +244,9 @@ void UVREPhysicalAnimationComponent::UpdateWeldedBoneDriver(float DeltaTime)
 								bModifiedBody = true;
 
 								FTransform Trans = SkeleMesh->GetSocketTransform(WeldedData->BoneName, ERelativeTransformSpace::RTS_World);
-								// This fixes a bug with simulating inverse scaled meshes
-								Trans.SetScale3D(FVector(1.f) * Trans.GetScale3D().GetSignVector());
 
+								// This fixes a bug with simulating inverse scaled meshes
+								//Trans.SetScale3D(FVector(1.f) * Trans.GetScale3D().GetSignVector());
 								FTransform GlobalTransform = WeldedData->RelativeTransform * Trans;
 								FTransform RelativeTM = GlobalTransform * GlobalPose;
 
@@ -258,6 +262,5 @@ void UVREPhysicalAnimationComponent::UpdateWeldedBoneDriver(float DeltaTime)
 
 			}
 		}
-#endif
 	}
 }

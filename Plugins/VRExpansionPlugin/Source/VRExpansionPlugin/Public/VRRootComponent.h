@@ -75,6 +75,8 @@ public:
 		}
 	}
 
+	virtual void SetSimulatePhysics(bool bSimulate) override;
+
 protected:
 	virtual bool MoveComponentImpl(const FVector& Delta, const FQuat& NewRotation, bool bSweep, FHitResult* OutHit = NULL, EMoveComponentFlags MoveFlags = MOVECOMP_NoFlags, ETeleportType Teleport = ETeleportType::None) override;
 	virtual void OnUpdateTransform(EUpdateTransformFlags UpdateTransformFlags, ETeleportType Teleport = ETeleportType::None) override;
@@ -216,9 +218,13 @@ void inline UVRRootComponent::GenerateOffsetToWorld(bool bUpdateBounds, bool bGe
 		CamRotOffset = curCameraRot;
 
 	/*if(bOffsetByHMD)
+	{
 		OffsetComponentToWorld = FTransform(CamRotOffset.Quaternion(), FVector(0, 0, bCenterCapsuleOnHMD ? curCameraLoc.Z : CapsuleHalfHeight) + CamRotOffset.RotateVector(VRCapsuleOffset), FVector(1.0f)) * GetComponentTransform();
+	}
 	else*/
+	{
 		OffsetComponentToWorld = FTransform(CamRotOffset.Quaternion(), FVector(curCameraLoc.X, curCameraLoc.Y, bCenterCapsuleOnHMD ? curCameraLoc.Z : CapsuleHalfHeight) + CamRotOffset.RotateVector(VRCapsuleOffset), FVector(1.0f)) * GetComponentTransform();
+	}
 
 	if (owningVRChar)
 	{

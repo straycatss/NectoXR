@@ -177,8 +177,16 @@ bool UVRGripScriptBase::CallRemoteFunction(UFunction * Function, void * Parms, F
 
 int32 UVRGripScriptBase::GetFunctionCallspace(UFunction * Function, FFrame * Stack)
 {
-	AActor* Owner = GetOwner();// Cast<AActor>(GetOuter());
-	return (Owner ? Owner->GetFunctionCallspace(Function, Stack) : FunctionCallspace::Local);
+	AActor* Owner = GetOwner();
+
+	if (HasAnyFlags(RF_ClassDefaultObject) || !IsSupportedForNetworking() || !Owner)
+	{
+		// This handles absorbing authority/cosmetic
+		return GEngine->GetGlobalFunctionCallspace(Function, this, Stack);
+	}
+
+	// Owner is certified valid now
+	return Owner->GetFunctionCallspace(Function, Stack);
 }
 
 FTransform UVRGripScriptBase::GetGripTransform(const FBPActorGripInformation &Grip, const FTransform & ParentTransform)
@@ -202,15 +210,22 @@ USceneComponent * UVRGripScriptBase::GetParentSceneComp()
 	return nullptr;
 }
 
-FTransform UVRGripScriptBase::GetParentTransform(bool bGetWorldTransform)
+FTransform UVRGripScriptBase::GetParentTransform(bool bGetWorldTransform, FName BoneName)
 {
-	UObject * ParentObj = this->GetParent();
+	UObject* ParentObj = this->GetParent();
 
-	if (USceneComponent * PrimParent = Cast<USceneComponent>(ParentObj))
+	if (USceneComponent* PrimParent = Cast<USceneComponent>(ParentObj))
 	{
-		return bGetWorldTransform ? PrimParent->GetComponentTransform() : PrimParent->GetRelativeTransform();
+		if (BoneName != NAME_None)
+		{
+			return PrimParent->GetSocketTransform(BoneName);
+		}
+		else
+		{
+			return PrimParent->GetComponentTransform();
+		}
 	}
-	else if (AActor * ParentActor = Cast<AActor>(ParentObj))
+	else if (AActor* ParentActor = Cast<AActor>(ParentObj))
 	{
 		return ParentActor->GetActorTransform();
 	}
