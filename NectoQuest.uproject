@@ -26,6 +26,16 @@
 		{
 			"Name": "HandTracking",
 			"Enabled": true
+		},
+		{
+			"Name": "Morpheus",
+			"Enabled": true,
+			"MarketplaceURL": "com.epicgames.launcher://ue/marketplace/product/faa5c1ffc4d642388fef1f71c53075d1"
+		},
+		{
+			"Name": "VoxelFree",
+			"Enabled": false,
+			"MarketplaceURL": "com.epicgames.launcher://ue/marketplace/content/c61d1941c8664436be42d649404a10e0"
 		}
 	],
 	"TargetPlatforms": [
