@@ -19,4 +19,7 @@ class NECTOQUEST_API USkeletonUtils : public UBlueprintFunctionLibrary
 //		UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Skeleton")
 //		static TArray<int32> GetChildBoneIndexes(USkeletalMesh* SkeletalMesh, int32 ParentBoneIndex);
 //#endif
+
+		UFUNCTION(BlueprintCallable, Category = "Physical Animation")
+		static void ForceTeleport(UPhysicalAnimationComponent* PhysicalAnimationComponent);
 };

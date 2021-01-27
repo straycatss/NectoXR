@@ -13,3 +13,9 @@
 //	SkeletalMesh->Skeleton->GetChildBones(ParentBoneIndex, outbones);
 //	return outbones;
 //}
+
+void USkeletonUtils::ForceTeleport(UPhysicalAnimationComponent* PhysicalAnimationComponent)
+{
+	check(PhysicalAnimationComponent);
+	PhysicalAnimationComponent->OnTeleport();
+}
