@@ -49,9 +49,11 @@ public class HandTracking : ModuleRules
         {
                     "Core",
                     "CoreUObject",
+                    "InputCore",
                     "Engine",
                     "HeadMountedDisplay",
-                    "UMG"
+                    "UMG",
+                    "OpenXR"
         });
 
 

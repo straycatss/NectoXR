@@ -33,12 +33,11 @@
 	],
 	"Plugins": [
 		{
-			"Name": "OculusVR",
-			"Enabled": true,
-			"WhiteListPlatforms": [ "Android", "Win64" ]
+			"Name": "VRExpansionPlugin",
+			"Enabled": true
 		},
 		{
-			"Name": "VRExpansionPlugin",
+			"Name": "OpenXR",
 			"Enabled": true
 		}
 	]
