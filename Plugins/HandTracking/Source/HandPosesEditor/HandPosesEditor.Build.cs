@@ -54,8 +54,7 @@ public class HandPosesEditor : ModuleRules
                     "CoreUObject",
                     "Engine",
                     "HeadMountedDisplay",
-                    "UMG",
-                    "OculusInput"
+                    "UMG"
         });
 
 

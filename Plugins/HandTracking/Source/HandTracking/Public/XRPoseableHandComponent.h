@@ -6,7 +6,7 @@
 #include "Components/PoseableMeshComponent.h"
 #include "MotionControllerComponent.h"
 #include "InputCoreTypes.h"
-
+#include "HeadMountedDisplayTypes.h"
 #include "XRPoseableHandComponent.generated.h"
 
 /**
@@ -26,6 +26,12 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	EControllerHand TrackedControllerType() const;
+
+	UFUNCTION(BlueprintCallable)
+	TMap<EHandKeypoint, FTransform> GetAllBoneTransforms() const;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TMap<EHandKeypoint, FName> BoneNameMapping;
 
 private:
 	/** Whether or not this component has authority within the frame */

@@ -14,6 +14,35 @@ UXRPoseableHandComponent::UXRPoseableHandComponent(const FObjectInitializer& Obj
 	PrimaryComponentTick.bStartWithTickEnabled = true;
 	PrimaryComponentTick.TickGroup = TG_PrePhysics;
 	PrimaryComponentTick.bTickEvenWhenPaused = true;
+
+	BoneNameMapping = {
+		{EHandKeypoint::Wrist, "Wrist Root"},
+		{EHandKeypoint::Palm, "Palm"},
+		{EHandKeypoint::ThumbMetacarpal, "Thumb1"},
+		{EHandKeypoint::ThumbProximal, "Thumb2"},
+		{EHandKeypoint::ThumbDistal, "Thumb3"},
+		{EHandKeypoint::ThumbTip, "Thumb Tip"},
+		{EHandKeypoint::IndexMetacarpal, "Index0"},
+		{EHandKeypoint::IndexProximal, "Index1"},
+		{EHandKeypoint::IndexIntermediate, "Index2"},
+		{EHandKeypoint::IndexDistal, "Index3"},
+		{EHandKeypoint::IndexTip, "Index Tip"},
+		{EHandKeypoint::MiddleMetacarpal, "Middle0"},
+		{EHandKeypoint::MiddleProximal, "Middle1"},
+		{EHandKeypoint::MiddleIntermediate, "Middle2"},
+		{EHandKeypoint::MiddleDistal, "Middle3"},
+		{EHandKeypoint::MiddleTip, "Middle Tip"},
+		{EHandKeypoint::RingMetacarpal, "Ring0"},
+		{EHandKeypoint::RingProximal, "Ring1"},
+		{EHandKeypoint::RingIntermediate, "Ring2"},
+		{EHandKeypoint::RingDistal, "Ring3"},
+		{EHandKeypoint::RingTip, "Ring Tip"},
+		{EHandKeypoint::LittleMetacarpal, "Pinky0"},
+		{EHandKeypoint::LittleProximal, "Pinky1"},
+		{EHandKeypoint::LittleIntermediate, "Pinky2"},
+		{EHandKeypoint::LittleDistal, "Pinky3"},
+		{EHandKeypoint::LittleTip, "Pinky Tip"}
+	};
 }
 
 
@@ -51,6 +80,19 @@ EControllerHand UXRPoseableHandComponent::TrackedControllerType() const
 	return EControllerHand::AnyHand;
 }
 
+TMap<EHandKeypoint, FTransform> UXRPoseableHandComponent::GetAllBoneTransforms() const
+{
+	TMap<EHandKeypoint, FTransform> transforms;
+	for (int index = 0; index < EHandKeypointCount; ++index) {
+		EHandKeypoint key = static_cast<EHandKeypoint>(index);
+		auto name = BoneNameMapping.Find(key);
+		if (name) {
+			transforms[key] = BoneSpaceTransforms[index];
+		}
+	}
+	return transforms;
+}
+
 void UXRPoseableHandComponent::UpdateBonePose()
 {
 	if (MotionControllerSource) {
@@ -58,10 +100,18 @@ void UXRPoseableHandComponent::UpdateBonePose()
 		EControllerHand Hand = TrackedControllerType();
 		if (Hand == EControllerHand::Left || Hand == EControllerHand::Right) {
 			UHeadMountedDisplayFunctionLibrary::GetMotionControllerData(this->GetWorld(), Hand, MotionControllerData);
-			
-			for (auto rotation : MotionControllerData.HandKeyRotations) {
-				UE_LOG(LogTemp, Log, TEXT("Hand: %s Rotation: %s"), *MotionControllerSource->MotionSource.ToString(), *rotation.ToString());
+
+			for (int index = 0; index < EHandKeypointCount; ++index) {
+				auto name = BoneNameMapping.Find(static_cast<EHandKeypoint>(index));
+				if (name) {
+					FTransform FingerTransform(MotionControllerData.HandKeyRotations[index], MotionControllerData.HandKeyPositions[index], FVector(MotionControllerData.HandKeyRadii[index]));
+					SetBoneTransformByName(*name, FingerTransform, EBoneSpaces::ComponentSpace);
+				}
 			}
+			//
+			//for (auto rotation : MotionControllerData.HandKeyRotations) {
+			//	UE_LOG(LogTemp, Log, TEXT("Hand: %s Rotation: %s"), *MotionControllerSource->MotionSource.ToString(), *rotation.ToString());
+			//}
 		}
 	}
 

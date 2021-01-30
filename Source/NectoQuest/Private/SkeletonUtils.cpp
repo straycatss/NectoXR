@@ -17,5 +17,5 @@
 void USkeletonUtils::ForceTeleport(UPhysicalAnimationComponent* PhysicalAnimationComponent)
 {
 	check(PhysicalAnimationComponent);
-	PhysicalAnimationComponent->OnTeleport();
+	//PhysicalAnimationComponent->OnTeleport();
 }
