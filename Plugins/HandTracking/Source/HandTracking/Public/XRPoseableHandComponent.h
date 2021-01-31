@@ -21,8 +21,8 @@ public:
 	UXRPoseableHandComponent(const FObjectInitializer& ObjectInitializer);
 	virtual void TickComponent(float DeltaTime, enum ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
-	UFUNCTION(BlueprintCallable, BlueprintSetter)
-	void SetMotionControllerSource(UMotionControllerComponent* MotionController);
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UMotionControllerComponent* MotionControllerSource;
 
 	UFUNCTION(BlueprintCallable)
 	EControllerHand TrackedControllerType() const;
@@ -38,6 +38,4 @@ private:
 	bool bHasAuthority;
 
 	void UpdateBonePose();
-
-	UMotionControllerComponent* MotionControllerSource;
 };

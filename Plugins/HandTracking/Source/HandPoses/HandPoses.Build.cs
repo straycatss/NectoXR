@@ -52,7 +52,7 @@ public class HandPoses : ModuleRules
                     "Engine",
                     "HeadMountedDisplay",
                     "UMG",
-                    "OculusInput"
+                    //"OculusInput"
         });
 
 

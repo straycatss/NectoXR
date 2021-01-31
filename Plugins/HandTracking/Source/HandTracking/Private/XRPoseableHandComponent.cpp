@@ -65,11 +65,6 @@ void UXRPoseableHandComponent::TickComponent(float DeltaTime, enum ELevelTick Ti
 }
 
 
-void UXRPoseableHandComponent::SetMotionControllerSource(UMotionControllerComponent* MotionController)
-{
-	MotionControllerSource = MotionController;
-}
-
 EControllerHand UXRPoseableHandComponent::TrackedControllerType() const
 {
 	if (MotionControllerSource) {
@@ -100,12 +95,13 @@ void UXRPoseableHandComponent::UpdateBonePose()
 		EControllerHand Hand = TrackedControllerType();
 		if (Hand == EControllerHand::Left || Hand == EControllerHand::Right) {
 			UHeadMountedDisplayFunctionLibrary::GetMotionControllerData(this->GetWorld(), Hand, MotionControllerData);
-
-			for (int index = 0; index < EHandKeypointCount; ++index) {
-				auto name = BoneNameMapping.Find(static_cast<EHandKeypoint>(index));
-				if (name) {
-					FTransform FingerTransform(MotionControllerData.HandKeyRotations[index], MotionControllerData.HandKeyPositions[index], FVector(MotionControllerData.HandKeyRadii[index]));
-					SetBoneTransformByName(*name, FingerTransform, EBoneSpaces::ComponentSpace);
+			if (MotionControllerData.DeviceVisualType == EXRVisualType::Hand) {
+				for (int index = 0; index < EHandKeypointCount; ++index) {
+					FName* name = BoneNameMapping.Find(static_cast<EHandKeypoint>(index));
+					if (name) {
+						FTransform FingerTransform(MotionControllerData.HandKeyRotations[index], MotionControllerData.HandKeyPositions[index], FVector(MotionControllerData.HandKeyRadii[index]));
+						SetBoneTransformByName(*name, FingerTransform, EBoneSpaces::ComponentSpace);
+					}
 				}
 			}
 			//
