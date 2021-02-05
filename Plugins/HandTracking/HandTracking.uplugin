@@ -16,19 +16,19 @@
 	"Installed": false,
 	"Modules": [
 		{
-		  "Name": "HandTracking",
-		  "Type": "Runtime",
-		  "LoadingPhase": "Default"
+			"Name": "HandTracking",
+			"Type": "Runtime",
+			"LoadingPhase": "Default"
 		},
 		{
-		  "Name": "HandPoses",
-		  "Type": "Runtime",
-		  "LoadingPhase": "Default"
+			"Name": "HandPoses",
+			"Type": "Runtime",
+			"LoadingPhase": "Default"
 		},
 		{
-		  "Name": "HandPosesEditor",
-		  "Type": "Editor",
-		  "LoadingPhase": "Default"
+			"Name": "HandPosesEditor",
+			"Type": "Editor",
+			"LoadingPhase": "Default"
 		}
 	],
 	"Plugins": [
@@ -38,6 +38,10 @@
 		},
 		{
 			"Name": "OpenXR",
+			"Enabled": true
+		},
+		{
+			"Name": "OpenXRHandTracking",
 			"Enabled": true
 		}
 	]

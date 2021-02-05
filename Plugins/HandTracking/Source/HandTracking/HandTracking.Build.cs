@@ -8,6 +8,7 @@ public class HandTracking : ModuleRules
     {
         PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
         //bEnforceIWYU = true;
+        var EngineDir = Path.GetFullPath(Target.RelativeEnginePath);
 
         // To detect VR Preview, not built out in packaged builds
         if (Target.bBuildEditor == true)
@@ -34,15 +35,17 @@ public class HandTracking : ModuleRules
 				
 				// ... add public include paths required here ...
 			}
-			);
+            );
 
         PrivateIncludePaths.AddRange(
-			new string[] {
+            new string[] {
+                //EngineDir + "Plugins\\Runtime\\OpenXRHandTracking\\Source\\OpenXRHandTracking\\Private"
+
 				//"HandTracking/Private",
                 //"HandTracking/Private/SimpleChar",
 				// ... add other private include paths required here ...
 			}
-			);
+            ); ;
 
         PublicDependencyModuleNames.AddRange(
         new string[]
@@ -53,7 +56,9 @@ public class HandTracking : ModuleRules
                     "Engine",
                     "HeadMountedDisplay",
                     "UMG",
-                    "OpenXR"
+                    "OpenXRHMD",
+                    "OpenXRInput",
+                    "OpenXRHandTracking"
         });
 
 

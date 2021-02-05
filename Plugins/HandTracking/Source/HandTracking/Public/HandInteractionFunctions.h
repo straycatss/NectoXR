@@ -14,6 +14,12 @@ class HANDTRACKING_API UHandInteractionFunctions : public UBlueprintFunctionLibr
 {
 	GENERATED_BODY()
 
+
+public:
+	//UFUNCTION(BlueprintCallable)
+	//bool IsHandTrackingAvailable() const;
+
+
 	//UFUNCTION(BlueprintCallable, Exec)
 	//void ShowtVirtualKeyboard(bool bShow, int32 UserIndex, TSharedPtr<IVirtualKeyboardEntry> TextEntryWidget = nullptr) const;
 };
