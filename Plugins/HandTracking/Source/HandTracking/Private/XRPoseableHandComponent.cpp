@@ -5,6 +5,7 @@
 #include "IXRTrackingSystem.h"
 #include "XRMotionControllerBase.h"
 #include "XRTrackingSystemBase.h"
+#include "UObject/Class.h"
 #include "HeadMountedDisplayFunctionLibrary.h"
 
 UXRPoseableHandComponent::UXRPoseableHandComponent(const FObjectInitializer& ObjectInitializer)
@@ -96,12 +97,20 @@ void UXRPoseableHandComponent::UpdateBonePose()
 		if (Hand == EControllerHand::Left || Hand == EControllerHand::Right) {
 			UHeadMountedDisplayFunctionLibrary::GetMotionControllerData(this->GetWorld(), Hand, MotionControllerData);
 			if (MotionControllerData.DeviceVisualType == EXRVisualType::Hand) {
-				for (int index = 0; index < EHandKeypointCount; ++index) {
-					FName* name = BoneNameMapping.Find(static_cast<EHandKeypoint>(index));
-					if (name) {
-						FTransform FingerTransform(MotionControllerData.HandKeyRotations[index], MotionControllerData.HandKeyPositions[index], FVector(MotionControllerData.HandKeyRadii[index]));
-						SetBoneTransformByName(*name, FingerTransform, EBoneSpaces::ComponentSpace);
+				if (MotionControllerData.HandKeyRotations.Num()) {
+					for (int index = 0; index < EHandKeypointCount; ++index) {
+						FName* name = BoneNameMapping.Find(static_cast<EHandKeypoint>(index));
+						if (name) {
+							FTransform FingerTransform(MotionControllerData.HandKeyRotations[index], MotionControllerData.HandKeyPositions[index], FVector(MotionControllerData.HandKeyRadii[index]));
+							SetBoneTransformByName(*name, FingerTransform, EBoneSpaces::WorldSpace);
+						}
+						else {
+							UE_LOG(LogTemp, Log, TEXT("No target bone found for %i"), *UEnum::GetValueAsString<EHandKeypoint>(static_cast<EHandKeypoint>(index)));
+						}
 					}
+				}
+				else {
+					UE_LOG(LogTemp, Log, TEXT("No HandKeyRotations found"));
 				}
 			}
 			//

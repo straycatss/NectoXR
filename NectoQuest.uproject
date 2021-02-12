@@ -1,6 +1,6 @@
 {
 	"FileVersion": 3,
-	"EngineAssociation": "{F94906A2-45B8-BCEB-55BD-F0AF15BD01AE}",
+	"EngineAssociation": "4.26",
 	"Category": "",
 	"Description": "",
 	"Modules": [
@@ -29,7 +29,7 @@
 		},
 		{
 			"Name": "Morpheus",
-			"Enabled": true,
+			"Enabled": false,
 			"MarketplaceURL": "com.epicgames.launcher://ue/marketplace/product/faa5c1ffc4d642388fef1f71c53075d1"
 		},
 		{
