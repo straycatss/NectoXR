@@ -101,8 +101,8 @@ void UXRPoseableHandComponent::UpdateBonePose()
 					for (int index = 0; index < EHandKeypointCount; ++index) {
 						FName* name = BoneNameMapping.Find(static_cast<EHandKeypoint>(index));
 						if (name) {
-							FTransform FingerTransform(MotionControllerData.HandKeyRotations[index], MotionControllerData.HandKeyPositions[index], FVector(MotionControllerData.HandKeyRadii[index]));
-							SetBoneTransformByName(*name, FingerTransform, EBoneSpaces::WorldSpace);
+							FTransform FingerTransform(MotionControllerData.HandKeyRotations[index], MotionControllerData.HandKeyPositions[index], FVector::OneVector); //MotionControllerData.HandKeyRadii[index])
+							SetBoneTransformByName(*name, FingerTransform, EBoneSpaces::ComponentSpace);
 						}
 						else {
 							UE_LOG(LogTemp, Log, TEXT("No target bone found for %i"), *UEnum::GetValueAsString<EHandKeypoint>(static_cast<EHandKeypoint>(index)));
@@ -110,7 +110,7 @@ void UXRPoseableHandComponent::UpdateBonePose()
 					}
 				}
 				else {
-					UE_LOG(LogTemp, Log, TEXT("No HandKeyRotations found"));
+					//UE_LOG(LogTemp, Log, TEXT("No HandKeyRotations found"));
 				}
 			}
 			//
