@@ -114,12 +114,28 @@
 		{
 			"Name": "XRVisualization",
 			"Enabled": true
+		},
+		{
+			"Name": "HoloLensAR",
+			"Enabled": true,
+			"SupportedTargetPlatforms": [
+				"Win64"
+			]
+		},
+		{
+			"Name": "WindowsMixedReality",
+			"Enabled": true,
+			"SupportedTargetPlatforms": [
+				"Win64",
+				"HoloLens"
+			]
 		}
 	],
 	"TargetPlatforms": [
 		"Android",
 		"WindowsNoEditor",
 		"MacNoEditor",
-		"LinuxAArch64NoEditor"
+		"LinuxAArch64NoEditor",
+		"HoloLens"
 	]
 }
