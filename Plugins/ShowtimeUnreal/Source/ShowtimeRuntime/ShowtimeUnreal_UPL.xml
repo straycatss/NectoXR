@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--Elias additions-->
+<root xmlns:android="http://schemas.android.com/apk/res/android">
+  <!-- init section is always evaluated once per architecture -->
+  <init>
+    <!-- currently only support armv8 -->
+    <setBool result="bSupported" value="false"/>
+    <isArch arch="arm64-v8a">
+      <setBool result="bSupported" value="true"/>
+    </isArch>
+  </init>
+  <gameActivityImportAdditions>
+    <insert>
+      import android.net.wifi.WifiManager;
+      import android.net.wifi.WifiInfo;
+      import android.net.DhcpInfo;
+      import android.net.wifi.WifiManager.MulticastLock;
+      import android.util.Log;
+      import android.content.pm.ApplicationInfo;
+    </insert>
+  </gameActivityImportAdditions>
+  <androidManifestUpdates>
+    <addPermission android:name="android.permission.INTERNET"  />
+    <addPermission android:name="android.permission.ACCESS_WIFI_STATE"  />
+    <addPermission android:name="android.permission.ACCESS_NETWORK_STATE"  />
+    <addPermission android:name="android.permission.CHANGE_WIFI_MULTICAST_STATE"  />
+  </androidManifestUpdates>
+  <buildGradleAdditions>
+    <insert>
+      <![CDATA[
+android {
+  packagingOptions{
+    doNotStrip "*/arm64-v8a/libShowtime.so"
+    doNotStrip "*/arm64-v8a/libShowtimePluginCoreEntities.so"
+  }
+}
+      ]]>
+    </insert>
+  </buildGradleAdditions>
+  <gameActivityClassAdditions>
+    <insert>
+      <![CDATA[
+
+      /**
+      * Get Showtime plugin directory
+      */
+      public String Showtime_GetShowtimePluginPath() {
+        return getApplicationInfo().nativeLibraryDir;
+      }
+
+      /**
+      * Get IP address from wifi adapter
+      */
+      public int Sockets_GetIP() {
+          final WifiManager wm = (WifiManager) getSystemService("wifi");
+          return wm.getConnectionInfo().getIpAddress();
+      }
+
+      /**
+      * Get Broadcast IP address from wifi adapter
+      */
+      public int Sockets_GetBroadcastIP() {
+          final WifiManager wm = (WifiManager) getSystemService("wifi");
+
+          DhcpInfo dhcp = wm.getDhcpInfo();
+          if(dhcp == null) return 0;
+
+          final int broadcast = (dhcp.ipAddress & dhcp.netmask) | ~dhcp.netmask;
+          return broadcast;
+      }
+
+      static MulticastLock multicastLock = null;
+
+      /**
+      * Aquire a MulticastLock
+      */
+      public void Sockets_AcquireMulticastLock() {
+          if(multicastLock == null) {
+              /* First time initialization of lock */
+              final WifiManager wm = (WifiManager) getSystemService("wifi");
+              multicastLock = wm.createMulticastLock("UE4-multicastlock");
+              multicastLock.setReferenceCounted(true);
+          }
+          Log.debug("Inside Java Sockets_AcquireMulticastLock");
+
+          /* Increment reference count */
+          multicastLock.acquire();
+          Log.debug("Multicast lock held? " + multicastLock.isHeld());
+      }
+
+      /**
+      * Release a MulticastLock
+      */
+      public void Sockets_ReleaseMulticastLock() {
+          if(multicastLock == null || !multicastLock.isHeld()) return;
+
+          /* Decrements reference count */
+          multicastLock.release();
+      }
+      ]]>
+    </insert>
+  </gameActivityClassAdditions>
+    
+
+	<!-- optional files or directories to copy to Intermediate/Android/APK -->
+	<resourceCopies>
+		<isArch arch="armeabi-v7a">
+			<copyFile src="$S(PluginDir)/../../external/lib/Android/armeabi-v7a/libShowtime.so"
+				dst="$S(BuildDir)/libs/armeabi-v7a/libShowtime.so" />
+      <copyFile src="$S(PluginDir)/../../external/bin/Android/armeabi-v7a/plugins/*.so"
+        dst="$S(BuildDir)/libs/armeabi-v7a/plugins" />
+		</isArch>
+    <isArch arch="arm64-v8a">
+      <copyFile src="$S(PluginDir)/../../external/lib/Android/arm64-v8a/libShowtime.so"
+        dst="$S(BuildDir)/libs/arm64-v8a/libShowtime.so" />
+      <copyFile src="$S(PluginDir)/../../external/bin/Android/arm64-v8a/plugins/*.so"
+        dst="$S(BuildDir)/libs/arm64-v8a/plugins" />
+    </isArch>
+	</resourceCopies>
+</root>

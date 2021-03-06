@@ -1,5 +1,5 @@
 # Symlinks
-Plugins/ShowtimeUnreal
+# Plugins/ShowtimeUnreal
 
 # Visual Studio 2015 user specific files
 .vs/
@@ -9,6 +9,7 @@ Plugins/ShowtimeUnreal
 *.lo
 *.o
 *.obj
+*.pdb
 
 # Precompiled Headers
 *.gch
