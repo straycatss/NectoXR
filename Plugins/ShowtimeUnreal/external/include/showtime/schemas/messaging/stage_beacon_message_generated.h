@@ -44,7 +44,6 @@ struct StageBeaconMessageBuilder {
         : fbb_(_fbb) {
     start_ = fbb_.StartTable();
   }
-  StageBeaconMessageBuilder &operator=(const StageBeaconMessageBuilder &);
   flatbuffers::Offset<StageBeaconMessage> Finish() {
     const auto end = fbb_.EndTable(start_);
     auto o = flatbuffers::Offset<StageBeaconMessage>(end);

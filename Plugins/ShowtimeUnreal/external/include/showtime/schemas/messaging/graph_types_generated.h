@@ -59,7 +59,7 @@ struct CableDataBuilder;
 struct Cable;
 struct CableBuilder;
 
-enum PlugValueData {
+enum PlugValueData : uint8_t {
   PlugValueData_NONE = 0,
   PlugValueData_IntList = 1,
   PlugValueData_FloatList = 2,
@@ -121,7 +121,7 @@ template<> struct PlugValueDataTraits<showtime::PlugHandshake> {
 bool VerifyPlugValueData(flatbuffers::Verifier &verifier, const void *obj, PlugValueData type);
 bool VerifyPlugValueDataVector(flatbuffers::Verifier &verifier, const flatbuffers::Vector<flatbuffers::Offset<void>> *values, const flatbuffers::Vector<uint8_t> *types);
 
-enum PlugDirection {
+enum PlugDirection : int8_t {
   PlugDirection_NONE = 0,
   PlugDirection_IN_JACK = 1,
   PlugDirection_OUT_JACK = 2,
@@ -154,7 +154,7 @@ inline const char *EnumNamePlugDirection(PlugDirection e) {
   return EnumNamesPlugDirection()[index];
 }
 
-enum EntityTypes {
+enum EntityTypes : uint8_t {
   EntityTypes_NONE = 0,
   EntityTypes_Component = 1,
   EntityTypes_Performer = 2,
@@ -243,7 +243,6 @@ struct IntListBuilder {
         : fbb_(_fbb) {
     start_ = fbb_.StartTable();
   }
-  IntListBuilder &operator=(const IntListBuilder &);
   flatbuffers::Offset<IntList> Finish() {
     const auto end = fbb_.EndTable(start_);
     auto o = flatbuffers::Offset<IntList>(end);
@@ -295,7 +294,6 @@ struct FloatListBuilder {
         : fbb_(_fbb) {
     start_ = fbb_.StartTable();
   }
-  FloatListBuilder &operator=(const FloatListBuilder &);
   flatbuffers::Offset<FloatList> Finish() {
     const auto end = fbb_.EndTable(start_);
     auto o = flatbuffers::Offset<FloatList>(end);
@@ -348,7 +346,6 @@ struct StrListBuilder {
         : fbb_(_fbb) {
     start_ = fbb_.StartTable();
   }
-  StrListBuilder &operator=(const StrListBuilder &);
   flatbuffers::Offset<StrList> Finish() {
     const auto end = fbb_.EndTable(start_);
     auto o = flatbuffers::Offset<StrList>(end);
@@ -389,7 +386,6 @@ struct PlugHandshakeBuilder {
         : fbb_(_fbb) {
     start_ = fbb_.StartTable();
   }
-  PlugHandshakeBuilder &operator=(const PlugHandshakeBuilder &);
   flatbuffers::Offset<PlugHandshake> Finish() {
     const auto end = fbb_.EndTable(start_);
     auto o = flatbuffers::Offset<PlugHandshake>(end);
@@ -467,7 +463,6 @@ struct PlugValueBuilder {
         : fbb_(_fbb) {
     start_ = fbb_.StartTable();
   }
-  PlugValueBuilder &operator=(const PlugValueBuilder &);
   flatbuffers::Offset<PlugValue> Finish() {
     const auto end = fbb_.EndTable(start_);
     auto o = flatbuffers::Offset<PlugValue>(end);
@@ -521,7 +516,6 @@ struct EntityDataBuilder {
         : fbb_(_fbb) {
     start_ = fbb_.StartTable();
   }
-  EntityDataBuilder &operator=(const EntityDataBuilder &);
   flatbuffers::Offset<EntityData> Finish() {
     const auto end = fbb_.EndTable(start_);
     auto o = flatbuffers::Offset<EntityData>(end);
@@ -578,7 +572,6 @@ struct ComponentDataBuilder {
         : fbb_(_fbb) {
     start_ = fbb_.StartTable();
   }
-  ComponentDataBuilder &operator=(const ComponentDataBuilder &);
   flatbuffers::Offset<ComponentData> Finish() {
     const auto end = fbb_.EndTable(start_);
     auto o = flatbuffers::Offset<ComponentData>(end);
@@ -619,7 +612,6 @@ struct PerformerDataBuilder {
         : fbb_(_fbb) {
     start_ = fbb_.StartTable();
   }
-  PerformerDataBuilder &operator=(const PerformerDataBuilder &);
   flatbuffers::Offset<PerformerData> Finish() {
     const auto end = fbb_.EndTable(start_);
     auto o = flatbuffers::Offset<PerformerData>(end);
@@ -676,7 +668,6 @@ struct PlugDataBuilder {
         : fbb_(_fbb) {
     start_ = fbb_.StartTable();
   }
-  PlugDataBuilder &operator=(const PlugDataBuilder &);
   flatbuffers::Offset<PlugData> Finish() {
     const auto end = fbb_.EndTable(start_);
     auto o = flatbuffers::Offset<PlugData>(end);
@@ -724,7 +715,6 @@ struct FactoryDataBuilder {
         : fbb_(_fbb) {
     start_ = fbb_.StartTable();
   }
-  FactoryDataBuilder &operator=(const FactoryDataBuilder &);
   flatbuffers::Offset<FactoryData> Finish() {
     const auto end = fbb_.EndTable(start_);
     auto o = flatbuffers::Offset<FactoryData>(end);
@@ -776,7 +766,6 @@ struct EntityBuilder {
         : fbb_(_fbb) {
     start_ = fbb_.StartTable();
   }
-  EntityBuilder &operator=(const EntityBuilder &);
   flatbuffers::Offset<Entity> Finish() {
     const auto end = fbb_.EndTable(start_);
     auto o = flatbuffers::Offset<Entity>(end);
@@ -828,7 +817,6 @@ struct ComponentBuilder {
         : fbb_(_fbb) {
     start_ = fbb_.StartTable();
   }
-  ComponentBuilder &operator=(const ComponentBuilder &);
   flatbuffers::Offset<Component> Finish() {
     const auto end = fbb_.EndTable(start_);
     auto o = flatbuffers::Offset<Component>(end);
@@ -891,7 +879,6 @@ struct PerformerBuilder {
         : fbb_(_fbb) {
     start_ = fbb_.StartTable();
   }
-  PerformerBuilder &operator=(const PerformerBuilder &);
   flatbuffers::Offset<Performer> Finish() {
     const auto end = fbb_.EndTable(start_);
     auto o = flatbuffers::Offset<Performer>(end);
@@ -947,7 +934,6 @@ struct PlugBuilder {
         : fbb_(_fbb) {
     start_ = fbb_.StartTable();
   }
-  PlugBuilder &operator=(const PlugBuilder &);
   flatbuffers::Offset<Plug> Finish() {
     const auto end = fbb_.EndTable(start_);
     auto o = flatbuffers::Offset<Plug>(end);
@@ -1001,7 +987,6 @@ struct FactoryBuilder {
         : fbb_(_fbb) {
     start_ = fbb_.StartTable();
   }
-  FactoryBuilder &operator=(const FactoryBuilder &);
   flatbuffers::Offset<Factory> Finish() {
     const auto end = fbb_.EndTable(start_);
     auto o = flatbuffers::Offset<Factory>(end);
@@ -1055,7 +1040,6 @@ struct CableDataBuilder {
         : fbb_(_fbb) {
     start_ = fbb_.StartTable();
   }
-  CableDataBuilder &operator=(const CableDataBuilder &);
   flatbuffers::Offset<CableData> Finish() {
     const auto end = fbb_.EndTable(start_);
     auto o = flatbuffers::Offset<CableData>(end);
@@ -1112,7 +1096,6 @@ struct CableBuilder {
         : fbb_(_fbb) {
     start_ = fbb_.StartTable();
   }
-  CableBuilder &operator=(const CableBuilder &);
   flatbuffers::Offset<Cable> Finish() {
     const auto end = fbb_.EndTable(start_);
     auto o = flatbuffers::Offset<Cable>(end);

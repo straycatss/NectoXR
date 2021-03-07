@@ -49,7 +49,6 @@ struct GraphMessageBuilder {
         : fbb_(_fbb) {
     start_ = fbb_.StartTable();
   }
-  GraphMessageBuilder &operator=(const GraphMessageBuilder &);
   flatbuffers::Offset<GraphMessage> Finish() {
     const auto end = fbb_.EndTable(start_);
     auto o = flatbuffers::Offset<GraphMessage>(end);
