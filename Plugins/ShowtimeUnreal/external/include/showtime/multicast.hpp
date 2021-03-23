@@ -110,6 +110,11 @@ public:
     R operator ()(Ts&&... args) const {
         return detail::call_helper<R, Args...>::call(listeners, std::forward<Ts>(args)...);
     }
+
+    void clear(){
+        listeners.clear();
+        handle_lookup.clear();
+    }
     
 private:
 

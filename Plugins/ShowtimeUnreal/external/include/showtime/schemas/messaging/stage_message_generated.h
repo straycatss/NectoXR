@@ -70,7 +70,7 @@ struct CableDestroyRequestBuilder;
 struct StageMessage;
 struct StageMessageBuilder;
 
-enum Signal : int8_t {
+enum Signal {
   Signal_EMPTY = 0,
   Signal_OK = 1,
   Signal_CLIENT_SYNC = 2,
@@ -145,7 +145,7 @@ inline const char *EnumNameSignal(Signal e) {
   return EnumNamesSignal()[index];
 }
 
-enum ClientLeaveReason : int8_t {
+enum ClientLeaveReason {
   ClientLeaveReason_QUIT = 0,
   ClientLeaveReason_TIMEOUT = 1,
   ClientLeaveReason_CRASH = 2,
@@ -178,7 +178,7 @@ inline const char *EnumNameClientLeaveReason(ClientLeaveReason e) {
   return EnumNamesClientLeaveReason()[index];
 }
 
-enum ServerStatus : int8_t {
+enum ServerStatus {
   ServerStatus_QUIT = 0,
   ServerStatus_CRASH = 1,
   ServerStatus_MIN = ServerStatus_QUIT,
@@ -208,7 +208,7 @@ inline const char *EnumNameServerStatus(ServerStatus e) {
   return EnumNamesServerStatus()[index];
 }
 
-enum Content : uint8_t {
+enum Content {
   Content_NONE = 0,
   Content_SignalMessage = 1,
   Content_ServerStatusMessage = 2,
@@ -401,6 +401,7 @@ struct SignalMessageBuilder {
         : fbb_(_fbb) {
     start_ = fbb_.StartTable();
   }
+  SignalMessageBuilder &operator=(const SignalMessageBuilder &);
   flatbuffers::Offset<SignalMessage> Finish() {
     const auto end = fbb_.EndTable(start_);
     auto o = flatbuffers::Offset<SignalMessage>(end);
@@ -442,6 +443,7 @@ struct ServerStatusMessageBuilder {
         : fbb_(_fbb) {
     start_ = fbb_.StartTable();
   }
+  ServerStatusMessageBuilder &operator=(const ServerStatusMessageBuilder &);
   flatbuffers::Offset<ServerStatusMessage> Finish() {
     const auto end = fbb_.EndTable(start_);
     auto o = flatbuffers::Offset<ServerStatusMessage>(end);
@@ -502,6 +504,7 @@ struct ClientJoinRequestBuilder {
         : fbb_(_fbb) {
     start_ = fbb_.StartTable();
   }
+  ClientJoinRequestBuilder &operator=(const ClientJoinRequestBuilder &);
   flatbuffers::Offset<ClientJoinRequest> Finish() {
     const auto end = fbb_.EndTable(start_);
     auto o = flatbuffers::Offset<ClientJoinRequest>(end);
@@ -571,6 +574,7 @@ struct ClientGraphHandshakeStartBuilder {
         : fbb_(_fbb) {
     start_ = fbb_.StartTable();
   }
+  ClientGraphHandshakeStartBuilder &operator=(const ClientGraphHandshakeStartBuilder &);
   flatbuffers::Offset<ClientGraphHandshakeStart> Finish() {
     const auto end = fbb_.EndTable(start_);
     auto o = flatbuffers::Offset<ClientGraphHandshakeStart>(end);
@@ -627,6 +631,7 @@ struct ClientGraphHandshakeStopBuilder {
         : fbb_(_fbb) {
     start_ = fbb_.StartTable();
   }
+  ClientGraphHandshakeStopBuilder &operator=(const ClientGraphHandshakeStopBuilder &);
   flatbuffers::Offset<ClientGraphHandshakeStop> Finish() {
     const auto end = fbb_.EndTable(start_);
     auto o = flatbuffers::Offset<ClientGraphHandshakeStop>(end);
@@ -687,6 +692,7 @@ struct ClientGraphHandshakeListenBuilder {
         : fbb_(_fbb) {
     start_ = fbb_.StartTable();
   }
+  ClientGraphHandshakeListenBuilder &operator=(const ClientGraphHandshakeListenBuilder &);
   flatbuffers::Offset<ClientGraphHandshakeListen> Finish() {
     const auto end = fbb_.EndTable(start_);
     auto o = flatbuffers::Offset<ClientGraphHandshakeListen>(end);
@@ -751,6 +757,7 @@ struct ClientLeaveRequestBuilder {
         : fbb_(_fbb) {
     start_ = fbb_.StartTable();
   }
+  ClientLeaveRequestBuilder &operator=(const ClientLeaveRequestBuilder &);
   flatbuffers::Offset<ClientLeaveRequest> Finish() {
     const auto end = fbb_.EndTable(start_);
     auto o = flatbuffers::Offset<ClientLeaveRequest>(end);
@@ -843,6 +850,7 @@ struct EntityCreateRequestBuilder {
         : fbb_(_fbb) {
     start_ = fbb_.StartTable();
   }
+  EntityCreateRequestBuilder &operator=(const EntityCreateRequestBuilder &);
   flatbuffers::Offset<EntityCreateRequest> Finish() {
     const auto end = fbb_.EndTable(start_);
     auto o = flatbuffers::Offset<EntityCreateRequest>(end);
@@ -887,6 +895,7 @@ struct EntityReadRequestBuilder {
         : fbb_(_fbb) {
     start_ = fbb_.StartTable();
   }
+  EntityReadRequestBuilder &operator=(const EntityReadRequestBuilder &);
   flatbuffers::Offset<EntityReadRequest> Finish() {
     const auto end = fbb_.EndTable(start_);
     auto o = flatbuffers::Offset<EntityReadRequest>(end);
@@ -984,6 +993,7 @@ struct EntityUpdateRequestBuilder {
         : fbb_(_fbb) {
     start_ = fbb_.StartTable();
   }
+  EntityUpdateRequestBuilder &operator=(const EntityUpdateRequestBuilder &);
   flatbuffers::Offset<EntityUpdateRequest> Finish() {
     const auto end = fbb_.EndTable(start_);
     auto o = flatbuffers::Offset<EntityUpdateRequest>(end);
@@ -1043,6 +1053,7 @@ struct EntityDestroyRequestBuilder {
         : fbb_(_fbb) {
     start_ = fbb_.StartTable();
   }
+  EntityDestroyRequestBuilder &operator=(const EntityDestroyRequestBuilder &);
   flatbuffers::Offset<EntityDestroyRequest> Finish() {
     const auto end = fbb_.EndTable(start_);
     auto o = flatbuffers::Offset<EntityDestroyRequest>(end);
@@ -1103,6 +1114,7 @@ struct EntityTakeOwnershipRequestBuilder {
         : fbb_(_fbb) {
     start_ = fbb_.StartTable();
   }
+  EntityTakeOwnershipRequestBuilder &operator=(const EntityTakeOwnershipRequestBuilder &);
   flatbuffers::Offset<EntityTakeOwnershipRequest> Finish() {
     const auto end = fbb_.EndTable(start_);
     auto o = flatbuffers::Offset<EntityTakeOwnershipRequest>(end);
@@ -1159,6 +1171,7 @@ struct EntityObserveRequestBuilder {
         : fbb_(_fbb) {
     start_ = fbb_.StartTable();
   }
+  EntityObserveRequestBuilder &operator=(const EntityObserveRequestBuilder &);
   flatbuffers::Offset<EntityObserveRequest> Finish() {
     const auto end = fbb_.EndTable(start_);
     auto o = flatbuffers::Offset<EntityObserveRequest>(end);
@@ -1219,6 +1232,7 @@ struct FactoryCreateEntityRequestBuilder {
         : fbb_(_fbb) {
     start_ = fbb_.StartTable();
   }
+  FactoryCreateEntityRequestBuilder &operator=(const FactoryCreateEntityRequestBuilder &);
   flatbuffers::Offset<FactoryCreateEntityRequest> Finish() {
     const auto end = fbb_.EndTable(start_);
     auto o = flatbuffers::Offset<FactoryCreateEntityRequest>(end);
@@ -1275,6 +1289,7 @@ struct FactoryCreateEntityACKBuilder {
         : fbb_(_fbb) {
     start_ = fbb_.StartTable();
   }
+  FactoryCreateEntityACKBuilder &operator=(const FactoryCreateEntityACKBuilder &);
   flatbuffers::Offset<FactoryCreateEntityACK> Finish() {
     const auto end = fbb_.EndTable(start_);
     auto o = flatbuffers::Offset<FactoryCreateEntityACK>(end);
@@ -1326,6 +1341,7 @@ struct CableCreateRequestBuilder {
         : fbb_(_fbb) {
     start_ = fbb_.StartTable();
   }
+  CableCreateRequestBuilder &operator=(const CableCreateRequestBuilder &);
   flatbuffers::Offset<CableCreateRequest> Finish() {
     const auto end = fbb_.EndTable(start_);
     auto o = flatbuffers::Offset<CableCreateRequest>(end);
@@ -1368,6 +1384,7 @@ struct CableReadRequestBuilder {
         : fbb_(_fbb) {
     start_ = fbb_.StartTable();
   }
+  CableReadRequestBuilder &operator=(const CableReadRequestBuilder &);
   flatbuffers::Offset<CableReadRequest> Finish() {
     const auto end = fbb_.EndTable(start_);
     auto o = flatbuffers::Offset<CableReadRequest>(end);
@@ -1419,6 +1436,7 @@ struct CableUpdateRequestBuilder {
         : fbb_(_fbb) {
     start_ = fbb_.StartTable();
   }
+  CableUpdateRequestBuilder &operator=(const CableUpdateRequestBuilder &);
   flatbuffers::Offset<CableUpdateRequest> Finish() {
     const auto end = fbb_.EndTable(start_);
     auto o = flatbuffers::Offset<CableUpdateRequest>(end);
@@ -1463,6 +1481,7 @@ struct CableDestroyRequestBuilder {
         : fbb_(_fbb) {
     start_ = fbb_.StartTable();
   }
+  CableDestroyRequestBuilder &operator=(const CableDestroyRequestBuilder &);
   flatbuffers::Offset<CableDestroyRequest> Finish() {
     const auto end = fbb_.EndTable(start_);
     auto o = flatbuffers::Offset<CableDestroyRequest>(end);
@@ -1647,6 +1666,7 @@ struct StageMessageBuilder {
         : fbb_(_fbb) {
     start_ = fbb_.StartTable();
   }
+  StageMessageBuilder &operator=(const StageMessageBuilder &);
   flatbuffers::Offset<StageMessage> Finish() {
     const auto end = fbb_.EndTable(start_);
     auto o = flatbuffers::Offset<StageMessage>(end);
