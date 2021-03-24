@@ -4,25 +4,27 @@
 
 #include "IOpenXRExtensionPlugin.h"
 #include "Modules/ModuleManager.h"
-#include "IIdentifiableXRDevice.h"
+
+//Forwards
+class FOpenXRHMD;
 
 
-class FColorScaleExtensionModule : 
+class FDisplayRefreshRateExtensionModule : 
 	public IOpenXRExtensionPlugin, 
 	public IModuleInterface
 {
 public:
-	FColorScaleExtensionModule();
+	FDisplayRefreshRateExtensionModule();
 
 	/** IModuleInterface implementation */
 	virtual void StartupModule() override;
 	virtual void ShutdownModule() override;
 	
-	void SetColorScaleAndBias(const FLinearColor& Scale, const FLinearColor& Bias);
-
 	bool GetRequiredExtensions(TArray<const ANSICHAR*>& OutExtensions);
-	virtual const void* OnEndProjectionLayer(XrSession InSession, int32 InLayerIndex, const void* InNext, XrCompositionLayerFlags& OutFlags) override;
 
-private:
-	XrCompositionLayerColorScaleBiasKHR HMDLayerColorInfo;
+	FOpenXRHMD* GetOpenXRHMD() const;
+
+	float GetRefreshRate();
+	void SetRefreshRate(float RefreshRate);
+	TArray<float> EnumerateRefreshRates();
 };

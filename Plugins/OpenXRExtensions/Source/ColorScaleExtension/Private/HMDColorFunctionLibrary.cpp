@@ -16,6 +16,6 @@ void UHMDColorFunctionLibrary::SetColorScaleAndBias(FLinearColor ColorScale, FLi
 		colorscale_module->SetColorScaleAndBias(ColorScale, ColorBias);
 	}
 	else {
-		UE_LOG(LogHMD, Warning, TEXT("Could not find the FColorScaleExtensionModule module"));
+		UE_LOG(LogHMD, Warning, TEXT("Could not find the ColorScaleExtension module"));
 	}
 }

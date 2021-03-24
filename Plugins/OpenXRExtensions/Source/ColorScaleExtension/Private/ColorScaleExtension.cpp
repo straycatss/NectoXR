@@ -37,7 +37,7 @@ void FColorScaleExtensionModule::SetColorScaleAndBias(const FLinearColor& Scale,
 	HMDLayerColorInfo.colorBias = XrColor4f{ Bias.R, Bias.G, Bias.B, Bias.A };
 }
 
-bool FColorScaleExtensionModule::GetOptionalExtensions(TArray<const ANSICHAR*>& OutExtensions)
+bool FColorScaleExtensionModule::GetRequiredExtensions(TArray<const ANSICHAR*>& OutExtensions)
 {
 	OutExtensions.Add(XR_KHR_COMPOSITION_LAYER_COLOR_SCALE_BIAS_EXTENSION_NAME);
 	return true;
