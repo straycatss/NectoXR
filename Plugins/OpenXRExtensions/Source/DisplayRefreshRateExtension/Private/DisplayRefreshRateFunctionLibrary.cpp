@@ -2,6 +2,7 @@
 #include "Modules/ModuleManager.h"
 #include "DisplayRefreshRateExtension.h"
 
+
 UDisplayRefreshRateFunctionLibrary::UDisplayRefreshRateFunctionLibrary(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
 {

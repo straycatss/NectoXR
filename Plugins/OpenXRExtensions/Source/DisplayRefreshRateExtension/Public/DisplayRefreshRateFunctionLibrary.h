@@ -18,18 +18,22 @@ class DISPLAYREFRESHRATEEXTENSION_API UDisplayRefreshRateFunctionLibrary : publi
 
 public:
 	/**
-	 * Multiply the post-compositor frame against a color and add a bias.
-	 * LayerColor = LayerColor * ColorScale + ColorBias
+	 * Set the HMD refresh rate.
 	 *
-	 * @param ColorScale		(in) Color to multiply the compositor layer by
-	 * @param ColorBias			(in) Color to offset the compositor layer by
+	 * @param RefreshRate		Refresh rate in Hz
 	 */
 	UFUNCTION(BlueprintCallable, Category = "XR|HeadMountedDisplay")
 	static void SetRefreshRate(float RefreshRate);
 
+	/**
+	 * Get the current HMD refresh rate.
+	 */
 	UFUNCTION(BlueprintCallable, Category = "XR|HeadMountedDisplay")
 	static float GetRefreshRate();
 
+	/**
+	 * List all supported refresh rates for the HMD
+	 */
 	UFUNCTION(BlueprintCallable, Category = "XR|HeadMountedDisplay")
 	static TArray<float> EnumerateRefreshRates();
 

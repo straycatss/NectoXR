@@ -19,10 +19,15 @@ public:
 	/** IModuleInterface implementation */
 	virtual void StartupModule() override;
 	virtual void ShutdownModule() override;
-	
-	bool GetRequiredExtensions(TArray<const ANSICHAR*>& OutExtensions);
 
+	virtual const void* OnGetSystem(XrInstance InInstance, const void* InNext) override;
+	bool GetRequiredExtensions(TArray<const ANSICHAR*>& OutExtensions);
 	FOpenXRHMD* GetOpenXRHMD() const;
+
+	// Extension functions
+	PFN_xrGetDisplayRefreshRateFB xrGetDisplayRefreshRateFB = nullptr;
+	PFN_xrRequestDisplayRefreshRateFB xrRequestDisplayRefreshRateFB = nullptr;
+	PFN_xrEnumerateDisplayRefreshRatesFB xrEnumerateDisplayRefreshRatesFB = nullptr;
 
 	float GetRefreshRate();
 	void SetRefreshRate(float RefreshRate);

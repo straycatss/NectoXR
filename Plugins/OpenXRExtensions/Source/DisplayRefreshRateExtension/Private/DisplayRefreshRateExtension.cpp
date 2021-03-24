@@ -1,13 +1,5 @@
 #include "DisplayRefreshRateExtension.h"
 
-#ifdef XR_NO_PROTOTYPES
-#undef XR_NO_PROTOTYPES
-#include <openxr/openxr.h>
-#define XR_NO_PROTOTYPES
-#else
-#include <openxr/openxr.h>
-#endif
-
 #include "OpenXRCore.h"
 #include <OpenXRHMD/Private/OpenXRHMD.h>
 
@@ -28,6 +20,15 @@ void FDisplayRefreshRateExtensionModule::ShutdownModule()
 {
 	// This function may be called during shutdown to clean up your module.  For modules that support dynamic reloading,
 	// we call this function before unloading the module.
+}
+
+const void* FDisplayRefreshRateExtensionModule::OnGetSystem(XrInstance InInstance, const void* InNext)
+{
+	// Store extension open xr calls to member function pointers for convenient use.
+	XR_ENSURE(xrGetInstanceProcAddr(InInstance, "xrGetDisplayRefreshRateFB", (PFN_xrVoidFunction*)&xrGetDisplayRefreshRateFB));
+	XR_ENSURE(xrGetInstanceProcAddr(InInstance, "xrRequestDisplayRefreshRateFB", (PFN_xrVoidFunction*)&xrRequestDisplayRefreshRateFB));
+	XR_ENSURE(xrGetInstanceProcAddr(InInstance, "xrEnumerateDisplayRefreshRatesFB", (PFN_xrVoidFunction*)&xrEnumerateDisplayRefreshRatesFB));
+	return InNext;
 }
 
 bool FDisplayRefreshRateExtensionModule::GetRequiredExtensions(TArray<const ANSICHAR*>& OutExtensions)

@@ -8,6 +8,7 @@ public class DisplayRefreshRateExtension : ModuleRules
     {
         PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
         //bEnforceIWYU = true;
+        var EngineDir = Path.GetFullPath(Target.RelativeEnginePath);
 
         // To detect VR Preview, not built out in packaged builds
         if (Target.bBuildEditor == true)
@@ -19,7 +20,6 @@ public class DisplayRefreshRateExtension : ModuleRules
             );
         }
 
-        var EngineDir = Path.GetFullPath(Target.RelativeEnginePath);
         PrivateIncludePathModuleNames.AddRange(
             new string[] {
                
@@ -34,8 +34,6 @@ public class DisplayRefreshRateExtension : ModuleRules
 
         PrivateIncludePaths.AddRange(
 			new string[] {
-                EngineDir + "Source/ThirdParty/OpenXR/include",
-                EngineDir + "Plugins/Runtime/OpenXR/OpenXRHMD/Private"
 				// ... add other private include paths required here ...
 			}
 		);
@@ -50,7 +48,6 @@ public class DisplayRefreshRateExtension : ModuleRules
                 "UMG",
                 "OpenXRHMD"
         });
-
 
         PrivateDependencyModuleNames.AddRange(
             new string[] 
