@@ -24,6 +24,11 @@
 			"Name": "DisplayRefreshRateExtension",
 			"Type": "Runtime",
 			"LoadingPhase": "PostConfigInit"
+		},
+		{
+			"Name": "ColorSpaceExtension",
+			"Type": "Runtime",
+			"LoadingPhase": "PostConfigInit"
 		}
 	],
 	"Plugins": [
