@@ -66,25 +66,21 @@ void FColorSpaceExtensionModule::SetColorSpace(FXrColorSpaceFB ColorSpace)
 
 TArray< FXrColorSpaceFB> FColorSpaceExtensionModule::EnumerateColorSpaces()
 {
-	TArray<XrColorSpaceFB> nativeColorSpaces;
 	TArray<FXrColorSpaceFB> colorSpaces;
 
 	if (XrSession Session = GetOpenXRHMD()->GetSession()) {
-		// Get num color spaces rates available
+		TArray<XrColorSpaceFB> nativeColorSpaces;
+
+		// Get num color spaces available
 		uint32_t colorSpaceCount = 0;
 		XR_ENSURE(xrEnumerateColorSpacesFB(Session, 0, &colorSpaceCount, nullptr));
-
-		// Set size of color spaces buffer to num color spaces
 		nativeColorSpaces.SetNum(colorSpaceCount);
-		colorSpaces.SetNum(colorSpaceCount);
 
 		// Get color spaces buffer
 		XR_ENSURE(xrEnumerateColorSpacesFB(Session, colorSpaceCount, &colorSpaceCount, nativeColorSpaces.GetData()));
-	}
-
-	// Cast color spaces from OpenXR to Unreal
-	for (auto colorspace : nativeColorSpaces) {
-		colorSpaces.Add((FXrColorSpaceFB)colorspace);
+		for (XrColorSpaceFB colorspace : nativeColorSpaces) {
+			colorSpaces.Add((FXrColorSpaceFB)colorspace);
+		}
 	}
 	
 	return colorSpaces;
