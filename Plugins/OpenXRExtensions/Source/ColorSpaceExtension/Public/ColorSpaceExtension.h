@@ -41,8 +41,11 @@ public:
 	TArray<FXrColorSpaceFB> EnumerateColorSpaces();
 
 	FXrColorSpaceFB StartupColorSpace;
+
 private:
 	// Extension functions
 	PFN_xrEnumerateColorSpacesFB xrEnumerateColorSpacesFB = nullptr;
 	PFN_xrSetColorSpaceFB xrSetColorSpaceFB = nullptr;
+
+	bool bIsExtensionAvailable;
 };

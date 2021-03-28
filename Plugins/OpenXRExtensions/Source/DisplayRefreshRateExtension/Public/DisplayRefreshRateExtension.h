@@ -24,12 +24,15 @@ public:
 	bool GetRequiredExtensions(TArray<const ANSICHAR*>& OutExtensions);
 	FOpenXRHMD* GetOpenXRHMD() const;
 
+	float GetRefreshRate();
+	void SetRefreshRate(float RefreshRate);
+	TArray<float> EnumerateRefreshRates();
+
+private:
 	// Extension functions
 	PFN_xrGetDisplayRefreshRateFB xrGetDisplayRefreshRateFB = nullptr;
 	PFN_xrRequestDisplayRefreshRateFB xrRequestDisplayRefreshRateFB = nullptr;
 	PFN_xrEnumerateDisplayRefreshRatesFB xrEnumerateDisplayRefreshRatesFB = nullptr;
 
-	float GetRefreshRate();
-	void SetRefreshRate(float RefreshRate);
-	TArray<float> EnumerateRefreshRates();
+	bool bIsExtensionAvailable;
 };

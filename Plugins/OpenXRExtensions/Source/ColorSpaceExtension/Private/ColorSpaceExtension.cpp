@@ -6,7 +6,7 @@
 #define LOCTEXT_NAMESPACE "FColorSpaceExtensionModule"
 
 
-FColorSpaceExtensionModule::FColorSpaceExtensionModule()
+FColorSpaceExtensionModule::FColorSpaceExtensionModule() : bIsExtensionAvailable(false)
 {
 }
 
@@ -27,6 +27,7 @@ const void* FColorSpaceExtensionModule::OnGetSystem(XrInstance InInstance, const
 	// Store extension open xr calls to member function pointers for convenient use.
 	XR_ENSURE(xrGetInstanceProcAddr(InInstance, "xrEnumerateColorSpacesFB", (PFN_xrVoidFunction*)&xrEnumerateColorSpacesFB));
 	XR_ENSURE(xrGetInstanceProcAddr(InInstance, "xrSetColorSpaceFB", (PFN_xrVoidFunction*)&xrSetColorSpaceFB));
+	bIsExtensionAvailable = true;
 	return InNext;
 }
 
@@ -59,6 +60,9 @@ FOpenXRHMD* FColorSpaceExtensionModule::GetOpenXRHMD() const
 
 void FColorSpaceExtensionModule::SetColorSpace(FXrColorSpaceFB ColorSpace)
 {
+	if (!bIsExtensionAvailable)
+		return;
+
 	if (XrSession Session = GetOpenXRHMD()->GetSession()) {
 		XR_ENSURE(xrSetColorSpaceFB(Session, static_cast<XrColorSpaceFB>(ColorSpace)));
 	}
@@ -67,6 +71,9 @@ void FColorSpaceExtensionModule::SetColorSpace(FXrColorSpaceFB ColorSpace)
 TArray< FXrColorSpaceFB> FColorSpaceExtensionModule::EnumerateColorSpaces()
 {
 	TArray<FXrColorSpaceFB> colorSpaces;
+
+	if (!bIsExtensionAvailable)
+		return colorSpaces;
 
 	if (XrSession Session = GetOpenXRHMD()->GetSession()) {
 		TArray<XrColorSpaceFB> nativeColorSpaces;

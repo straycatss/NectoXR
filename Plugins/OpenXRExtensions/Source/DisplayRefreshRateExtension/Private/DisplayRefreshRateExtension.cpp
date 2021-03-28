@@ -6,7 +6,7 @@
 #define LOCTEXT_NAMESPACE "FColorScaleExtensionModule"
 
 
-FDisplayRefreshRateExtensionModule::FDisplayRefreshRateExtensionModule()
+FDisplayRefreshRateExtensionModule::FDisplayRefreshRateExtensionModule() : bIsExtensionAvailable(false)
 {
 }
 
@@ -28,6 +28,7 @@ const void* FDisplayRefreshRateExtensionModule::OnGetSystem(XrInstance InInstanc
 	XR_ENSURE(xrGetInstanceProcAddr(InInstance, "xrGetDisplayRefreshRateFB", (PFN_xrVoidFunction*)&xrGetDisplayRefreshRateFB));
 	XR_ENSURE(xrGetInstanceProcAddr(InInstance, "xrRequestDisplayRefreshRateFB", (PFN_xrVoidFunction*)&xrRequestDisplayRefreshRateFB));
 	XR_ENSURE(xrGetInstanceProcAddr(InInstance, "xrEnumerateDisplayRefreshRatesFB", (PFN_xrVoidFunction*)&xrEnumerateDisplayRefreshRatesFB));
+	bIsExtensionAvailable = true;
 	return InNext;
 }
 
@@ -50,6 +51,10 @@ FOpenXRHMD* FDisplayRefreshRateExtensionModule::GetOpenXRHMD() const
 float FDisplayRefreshRateExtensionModule::GetRefreshRate()
 {
 	float RefreshRate = 0.0f;
+
+	if (!bIsExtensionAvailable)
+		return RefreshRate;
+
 	if (XrSession Session = GetOpenXRHMD()->GetSession()) {
 		XR_ENSURE(xrGetDisplayRefreshRateFB(Session, &RefreshRate));
 	}
@@ -58,6 +63,9 @@ float FDisplayRefreshRateExtensionModule::GetRefreshRate()
 
 void FDisplayRefreshRateExtensionModule::SetRefreshRate(float RefreshRate)
 {
+	if (!bIsExtensionAvailable)
+		return;
+
 	if (XrSession Session = GetOpenXRHMD()->GetSession()) {
 		XR_ENSURE(xrRequestDisplayRefreshRateFB(Session, RefreshRate));
 	}
@@ -66,6 +74,10 @@ void FDisplayRefreshRateExtensionModule::SetRefreshRate(float RefreshRate)
 TArray<float> FDisplayRefreshRateExtensionModule::EnumerateRefreshRates()
 {
 	TArray<float> displayRefreshRates;
+
+	if (!bIsExtensionAvailable)
+		return displayRefreshRates;
+
 	if (XrSession Session = GetOpenXRHMD()->GetSession()) {
 		// Get num display refresh rates available
 		uint32_t displayRefreshRateCount = 0;
