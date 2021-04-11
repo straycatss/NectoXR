@@ -16,6 +16,9 @@ class HANDTRACKING_API UHandInteractionFunctions : public UBlueprintFunctionLibr
 
 
 public:
+	UFUNCTION(BlueprintCallable)
+	static FTransform TransformFromString(const FString& InStr) const;
+
 	//UFUNCTION(BlueprintCallable)
 	//bool IsHandTrackingAvailable() const;
 

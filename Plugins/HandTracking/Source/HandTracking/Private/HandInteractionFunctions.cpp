@@ -4,6 +4,14 @@
 #include "HandInteractionFunctions.h"
 //#include "OpenXRHandTracking.h"
 //#include "IOpenXRHandTrackingModule.h"
+
+FTransform UHandInteractionFunctions::TransformFromString(const FString& InStr) const
+{
+	FTransform t;
+	t.InitFromString(InStr);
+	return t;
+}
+
 //void UHandInteractionFunctions::ShowtVirtualKeyboard(bool bShow, int32 UserIndex, TSharedPtr<IVirtualKeyboardEntry> TextEntryWidget) const
 //{
 //	FSlateApplication::ShowVirtualKeyboard(bShow, UserIndex, TextEntryWidget);
