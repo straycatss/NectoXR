@@ -5,7 +5,7 @@
 //#include "OpenXRHandTracking.h"
 //#include "IOpenXRHandTrackingModule.h"
 
-FTransform UHandInteractionFunctions::TransformFromString(const FString& InStr) const
+FTransform UHandInteractionFunctions::TransformFromString(const FString& InStr)
 {
 	FTransform t;
 	t.InitFromString(InStr);
