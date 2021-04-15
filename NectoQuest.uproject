@@ -129,6 +129,16 @@
 				"Win64",
 				"HoloLens"
 			]
+		},
+		{
+			"Name": "OpenXRMsftHandInteraction",
+			"Enabled": true,
+			"SupportedTargetPlatforms": [
+				"Win32",
+				"Win64",
+				"HoloLens",
+				"Android"
+			]
 		}
 	],
 	"TargetPlatforms": [
