@@ -18,17 +18,43 @@
 		{
 			"Name": "ColorScaleExtension",
 			"Type": "Runtime",
-			"LoadingPhase": "PostConfigInit"
+			"LoadingPhase": "PostConfigInit",
+			"WhitelistPlatforms": [
+				"Win64",
+				"Hololens",
+				"Android"
+			]
 		},
 		{
 			"Name": "DisplayRefreshRateExtension",
 			"Type": "Runtime",
-			"LoadingPhase": "PostConfigInit"
+			"LoadingPhase": "PostConfigInit",
+			"WhitelistPlatforms": [
+				"Win64",
+				"Hololens",
+				"Android"
+			]
 		},
 		{
 			"Name": "ColorSpaceExtension",
 			"Type": "Runtime",
-			"LoadingPhase": "PostConfigInit"
+			"LoadingPhase": "PostConfigInit",
+			"WhitelistPlatforms": [
+				"Win64",
+				"Hololens",
+				"Android"
+			]
+		},
+		{
+			"Name": "OpenXRExtensions",
+			"Type": "Runtime",
+			"LoadingPhase": "PostConfigInit",
+			"WhitelistPlatforms": [
+				"Win64",
+				"Mac",
+				"Hololens",
+				"Android"
+			]
 		}
 	],
 	"Plugins": [

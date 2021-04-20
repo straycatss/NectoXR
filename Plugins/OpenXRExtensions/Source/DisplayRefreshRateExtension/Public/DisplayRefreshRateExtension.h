@@ -9,7 +9,7 @@
 class FOpenXRHMD;
 
 
-class FDisplayRefreshRateExtensionModule : 
+class DISPLAYREFRESHRATEEXTENSION_API FDisplayRefreshRateExtensionModule :
 	public IOpenXRExtensionPlugin, 
 	public IModuleInterface
 {

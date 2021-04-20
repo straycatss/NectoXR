@@ -7,7 +7,7 @@
 #include "IIdentifiableXRDevice.h"
 
 
-class FColorScaleExtensionModule : 
+class COLORSCALEEXTENSION_API FColorScaleExtensionModule :
 	public IOpenXRExtensionPlugin, 
 	public IModuleInterface
 {
