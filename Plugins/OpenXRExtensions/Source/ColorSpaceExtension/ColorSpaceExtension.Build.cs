@@ -50,13 +50,6 @@ public class ColorSpaceExtension : ModuleRules
         });
 
         PrivateDependencyModuleNames.AddRange(
-            new string[] 
-            {
-        });
-
-
-
-        PrivateDependencyModuleNames.AddRange(
     		new string[]
     		{
     			//"CoreUObject",

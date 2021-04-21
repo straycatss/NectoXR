@@ -45,19 +45,20 @@ public class OpenXRExtensions : ModuleRules
                 "CoreUObject",
                 "Engine",
                 "HeadMountedDisplay",
-                "UMG",
+                "UMG"
+        });
+
+        if (Target.Platform == UnrealTargetPlatform.Win64 ||
+           Target.Platform == UnrealTargetPlatform.Android ||
+           Target.Platform == UnrealTargetPlatform.HoloLens)
+        {
+            PrivateDependencyModuleNames.AddRange(new string[] { 
                 "DisplayRefreshRateExtension",
                 "ColorScaleExtension",
                 "ColorSpaceExtension"
-
-        });
-
-        PrivateDependencyModuleNames.AddRange(
-            new string[] 
-            {
-        });
-
-
+            });
+            PrivateDefinitions.AddRange(new string[] { "OPENXR_SUPPORTED" });
+        }
 
         PrivateDependencyModuleNames.AddRange(
     		new string[]

@@ -37,7 +37,7 @@ const void* FColorSpaceExtensionModule::OnCreateSession(XrInstance InInstance, X
 	XrSystemProperties systemProperties{ XR_TYPE_SYSTEM_PROPERTIES, &ColorSpaceSystemProperties };
 
 	XR_ENSURE(xrGetSystemProperties(InInstance, InSystem, &systemProperties));
-	StartupColorSpace = (FXrColorSpaceFB)ColorSpaceSystemProperties.colorSpace;
+	StartupColorSpace = ColorSpaceSystemProperties.colorSpace;
 
 	return InNext;
 }
@@ -58,25 +58,24 @@ FOpenXRHMD* FColorSpaceExtensionModule::GetOpenXRHMD() const
 	return nullptr;	
 }
 
-void FColorSpaceExtensionModule::SetColorSpace(FXrColorSpaceFB ColorSpace)
+void FColorSpaceExtensionModule::SetColorSpace(XrColorSpaceFB ColorSpace)
 {
 	if (!bIsExtensionAvailable)
 		return;
 
 	if (XrSession Session = GetOpenXRHMD()->GetSession()) {
-		XR_ENSURE(xrSetColorSpaceFB(Session, static_cast<XrColorSpaceFB>(ColorSpace)));
+		XR_ENSURE(xrSetColorSpaceFB(Session, ColorSpace));
 	}
 }
 
-TArray< FXrColorSpaceFB> FColorSpaceExtensionModule::EnumerateColorSpaces()
+TArray<XrColorSpaceFB> FColorSpaceExtensionModule::EnumerateColorSpaces()
 {
-	TArray<FXrColorSpaceFB> colorSpaces;
+	TArray<XrColorSpaceFB> nativeColorSpaces;
 
 	if (!bIsExtensionAvailable)
-		return colorSpaces;
+		return nativeColorSpaces;
 
 	if (XrSession Session = GetOpenXRHMD()->GetSession()) {
-		TArray<XrColorSpaceFB> nativeColorSpaces;
 
 		// Get num color spaces available
 		uint32_t colorSpaceCount = 0;
@@ -85,12 +84,9 @@ TArray< FXrColorSpaceFB> FColorSpaceExtensionModule::EnumerateColorSpaces()
 
 		// Get color spaces buffer
 		XR_ENSURE(xrEnumerateColorSpacesFB(Session, colorSpaceCount, &colorSpaceCount, nativeColorSpaces.GetData()));
-		for (XrColorSpaceFB colorspace : nativeColorSpaces) {
-			colorSpaces.Add((FXrColorSpaceFB)colorspace);
-		}
 	}
 	
-	return colorSpaces;
+	return nativeColorSpaces;
 }
 
 #undef LOCTEXT_NAMESPACE

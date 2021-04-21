@@ -48,14 +48,6 @@ public class ColorScaleExtension : ModuleRules
                 "OpenXRHMD"
         });
 
-
-        PrivateDependencyModuleNames.AddRange(
-            new string[] 
-            {
-        });
-
-
-
         PrivateDependencyModuleNames.AddRange(
     		new string[]
     		{

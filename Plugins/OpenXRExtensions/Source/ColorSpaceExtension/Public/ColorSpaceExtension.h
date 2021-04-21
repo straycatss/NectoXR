@@ -3,7 +3,6 @@
 #pragma once
 
 #include "IOpenXRExtensionPlugin.h"
-#include "FBColorSpaces.h"
 #include "Modules/ModuleManager.h"
 
 //Forwards
@@ -27,10 +26,10 @@ public:
 	bool GetRequiredExtensions(TArray<const ANSICHAR*>& OutExtensions);
 	FOpenXRHMD* GetOpenXRHMD() const;
 
-	void SetColorSpace(const FXrColorSpaceFB ColorSpace);
-	TArray<FXrColorSpaceFB> EnumerateColorSpaces();
+	void SetColorSpace(const XrColorSpaceFB ColorSpace);
+	TArray<XrColorSpaceFB> EnumerateColorSpaces();
 
-	FXrColorSpaceFB StartupColorSpace;
+	XrColorSpaceFB StartupColorSpace;
 
 private:
 	// Extension functions
