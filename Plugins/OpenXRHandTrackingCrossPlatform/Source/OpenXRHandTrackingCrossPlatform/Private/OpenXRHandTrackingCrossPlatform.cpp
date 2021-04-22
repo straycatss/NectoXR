@@ -279,6 +279,8 @@ void FOpenXRHandTrackingCrossPlatform::UpdateDeviceLocations(XrSession InSession
 			}
 		}
 	}
+    
+    UpdateLiveLink();
 }
 #endif
 
@@ -425,7 +427,8 @@ ETrackingStatus FOpenXRHandTrackingCrossPlatform::GetControllerTrackingStatus(co
 
 FName FOpenXRHandTrackingCrossPlatform::GetMotionControllerDeviceTypeName() const
 {
-	const static FName DefaultName(TEXT("OpenXRHandTrackingCrossPlatform"));
+    // Keep this the same as the original OpenXXRHandTracking module since OpenXRHMD looks for the hand tracker by name
+	const static FName DefaultName(TEXT("OpenXRHandTracking"));
 	return DefaultName;
 }
 

@@ -1,4 +1,4 @@
-﻿// Copyright Epic Games, Inc. All Rights Reserved.
+// Copyright Epic Games, Inc. All Rights Reserved.
 
 #include "LiveLinkOpenXRHandTrackingCrossPlatformSourceFactory.h"
 #include "IOpenXRHandTrackingCrossPlatformModule.h"
@@ -11,12 +11,12 @@
 
 FText ULiveLinkOpenXRHandTrackingCrossPlatformSourceFactory::GetSourceDisplayName() const
 {
-	return LOCTEXT("HandTrackingLiveLinkSourceName", "Windows Mixed Reality Hand Tracking Source");
+	return LOCTEXT("HandTrackingLiveLinkSourceName", "OpenXR Hand Tracking Source");
 }
 
 FText ULiveLinkOpenXRHandTrackingCrossPlatformSourceFactory::GetSourceTooltip() const
 {
-	return LOCTEXT("HandTrackingLiveLinkSourceTooltip", "Windows Mixed Reality Hand Tracking Key Points Source");
+	return LOCTEXT("HandTrackingLiveLinkSourceTooltip", "OpenXR Hand Tracking Key Points Source");
 }
 
 ULiveLinkOpenXRHandTrackingCrossPlatformSourceFactory::EMenuType ULiveLinkOpenXRHandTrackingCrossPlatformSourceFactory::GetMenuType() const

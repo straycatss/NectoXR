@@ -47,12 +47,12 @@ FText FOpenXRHandTrackingCrossPlatform::GetSourceMachineName() const
 
 FText FOpenXRHandTrackingCrossPlatform::GetSourceStatus() const
 {
-	return LOCTEXT("OpenXRHandTrackingCrossPlatformLiveLinkStatus", "Active");
+	return LOCTEXT("OpenXRHandTrackingLiveLinkStatus", "Active");
 }
 
 FText FOpenXRHandTrackingCrossPlatform::GetSourceType() const
 {
-	return LOCTEXT("OpenXRHandTrackingCrossPlatformLiveLinkSourceType", "OpenXR Hand Tracking");
+	return LOCTEXT("OpenXRHandTrackingLiveLinkSourceType", "OpenXR Hand Tracking");
 }
 
 void FOpenXRHandTrackingCrossPlatform::SetupLiveLinkData()
