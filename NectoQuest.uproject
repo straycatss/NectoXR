@@ -1,6 +1,6 @@
 {
 	"FileVersion": 3,
-	"EngineAssociation": "{C35DC4EC-4DF9-1A29-B1C9-45BDECAB66F3}",
+	"EngineAssociation": "4.26",
 	"Category": "",
 	"Description": "",
 	"Modules": [
@@ -47,16 +47,6 @@
 			]
 		},
 		{
-			"Name": "OpenXRHandTracking",
-			"Enabled": true,
-			"SupportedTargetPlatforms": [
-				"Win32",
-				"Win64",
-				"HoloLens",
-				"Android"
-			]
-		},
-		{
 			"Name": "OpenXR",
 			"Enabled": true,
 			"SupportedTargetPlatforms": [
@@ -64,6 +54,17 @@
 				"Win64",
 				"Android",
 				"HoloLens"
+			]
+		},
+		{
+			"Name": "OpenXRHandTrackingCrossPlatform",
+			"Enabled": true,
+			"SupportedTargetPlatforms": [
+				"Win32",
+				"Win64",
+				"Mac",
+				"HoloLens",
+				"Android"
 			]
 		},
 		{
@@ -129,6 +130,14 @@
 				"Win32",
 				"Win64",
 				"HoloLens",
+				"Android"
+			]
+		},
+		{
+			"Name": "ShowtimeUnreal",
+			"Enabled": false,
+			"SupportedTargetPlatforms": [
+				"Win64",
 				"Android"
 			]
 		}

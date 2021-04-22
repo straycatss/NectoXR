@@ -1,6 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-#include "..\Public\MathUtils.h"
+#include "MathUtils.h"
+#include "Components/SceneComponent.h"
 
 void UMathUtils::GetSceneComponentArraySphereBounds(const TArray<USceneComponent*>& Components, bool bOnlyCollidingComponents, FVector& Center, FVector& BoxExtent, float& SphereExtentRadius)
 {

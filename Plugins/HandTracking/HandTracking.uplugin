@@ -37,11 +37,7 @@
 			"Enabled": true
 		},
 		{
-			"Name": "OpenXR",
-			"Enabled": true
-		},
-		{
-			"Name": "OpenXRHandTracking",
+			"Name": "OpenXRHandTrackingCrossPlatform",
 			"Enabled": true
 		}
 	]

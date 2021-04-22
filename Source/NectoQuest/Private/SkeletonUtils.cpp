@@ -3,7 +3,7 @@
 
 #include "SkeletonUtils.h"
 #include "Animation/Skeleton.h"
-#include "..\Public\SkeletonUtils.h"
+#include "SkeletonUtils.h"
 
 //TArray<int32> USkeletonUtils::GetChildBoneIndexes(USkeletalMesh* SkeletalMesh, int32 ParentBoneIndex)
 //{

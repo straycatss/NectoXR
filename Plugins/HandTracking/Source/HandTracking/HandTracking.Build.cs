@@ -56,9 +56,7 @@ public class HandTracking : ModuleRules
                     "Engine",
                     "HeadMountedDisplay",
                     "UMG",
-                    "OpenXRHMD",
-                    "OpenXRInput",
-                    "OpenXRHandTracking"
+                    "OpenXRHandTrackingCrossPlatform"
         });
 
 
