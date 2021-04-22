@@ -1,6 +1,6 @@
 The MIT License (MIT)
 
-NectorXR Copyright (c) 2020 Byron Mallett
+NectoXR Copyright (c) 2020 Byron Mallett
 
 VRExpansionPlugin and AdvancedSessionsPlugin - Copyright Joshua Statzer
 
