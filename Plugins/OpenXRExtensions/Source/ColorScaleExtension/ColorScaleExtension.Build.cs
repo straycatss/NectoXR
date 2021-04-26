@@ -7,6 +7,7 @@ public class ColorScaleExtension : ModuleRules
     public ColorScaleExtension(ReadOnlyTargetRules Target) : base(Target)
     {
         PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
+        PrivatePCHHeaderFile = @"../../Source/OpenXRExtensions/Private/OpenXRCommon.h";
         //bEnforceIWYU = true;
 
         // To detect VR Preview, not built out in packaged builds
@@ -33,9 +34,10 @@ public class ColorScaleExtension : ModuleRules
 
         PrivateIncludePaths.AddRange(
 			new string[] {
-				// ... add other private include paths required here ...
+                "../../OpenXRExtensions/Source/OpenXRExtensions/Private",
+                "../../OpenXRExtensions/Source/OpenXRExtensions/Private/external/include/openxr"  // Include the OpenXR SDK 1.0.15 headers to use newer features
 			}
-		);
+        );
 
         PublicDependencyModuleNames.AddRange(
             new string[]

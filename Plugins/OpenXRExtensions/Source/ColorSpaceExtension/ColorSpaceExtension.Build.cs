@@ -7,6 +7,8 @@ public class ColorSpaceExtension : ModuleRules
     public ColorSpaceExtension(ReadOnlyTargetRules Target) : base(Target)
     {
         PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
+        PrivatePCHHeaderFile = @"../../Source/OpenXRExtensions/Private/OpenXRCommon.h";
+
         //bEnforceIWYU = true;
         var EngineDir = Path.GetFullPath(Target.RelativeEnginePath);
 
@@ -33,10 +35,11 @@ public class ColorSpaceExtension : ModuleRules
 			);
 
         PrivateIncludePaths.AddRange(
-			new string[] {
-				// ... add other private include paths required here ...
-			}
-		);
+            new string[] {
+                "../../OpenXRExtensions/Source/OpenXRExtensions/Private",
+                "../../OpenXRExtensions/Source/OpenXRExtensions/Private/external/include/openxr"  // Include the OpenXR SDK 1.0.15 headers to use newer features
+            }
+        );
 
         PublicDependencyModuleNames.AddRange(
             new string[]

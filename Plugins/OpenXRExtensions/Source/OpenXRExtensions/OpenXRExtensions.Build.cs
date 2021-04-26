@@ -7,6 +7,8 @@ public class OpenXRExtensions : ModuleRules
     public OpenXRExtensions(ReadOnlyTargetRules Target) : base(Target)
     {
         PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
+        PrivatePCHHeaderFile = @"Private/OpenXRCommon.h";
+
         //bEnforceIWYU = true;
         var EngineDir = Path.GetFullPath(Target.RelativeEnginePath);
 
@@ -33,10 +35,10 @@ public class OpenXRExtensions : ModuleRules
 			);
 
         PrivateIncludePaths.AddRange(
-			new string[] {
-				// ... add other private include paths required here ...
-			}
-		);
+            new string[] {
+                "OpenXRExtensions/Private/external/include/openxr"  // Include the OpenXR SDK 1.0.15 headers to use newer features
+            }
+        );
 
         PublicDependencyModuleNames.AddRange(
             new string[]

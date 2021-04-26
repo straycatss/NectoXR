@@ -1,9 +1,8 @@
 #include "OpenXRExtensionsFunctionLibrary.h"
 #include "Modules/ModuleManager.h"
 
-DEFINE_LOG_CATEGORY(LogOpenXRExtension);
-
 #if defined(OPENXR_SUPPORTED)
+#include "OpenXRCommon.h"
 #include "DisplayRefreshRateExtension.h"
 #include "ColorScaleExtension.h"
 #include "ColorSpaceExtension.h"
@@ -12,6 +11,8 @@ class FDisplayRefreshRateExtensionModule {};
 class FColorSpaceExtensionModule {};
 class FColorScaleExtensionModule {};
 #endif
+
+DEFINE_LOG_CATEGORY(LogOpenXRExtension);
 
 UOpenXRExtensionsFunctionLibrary::UOpenXRExtensionsFunctionLibrary(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)

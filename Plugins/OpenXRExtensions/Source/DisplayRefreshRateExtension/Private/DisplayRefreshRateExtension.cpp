@@ -1,5 +1,4 @@
 #include "DisplayRefreshRateExtension.h"
-
 #include "OpenXRCore.h"
 #include <OpenXRHMD/Private/OpenXRHMD.h>
 

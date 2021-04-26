@@ -2,6 +2,7 @@
 
 #pragma once
 
+#include <OpenXRCommon.h>
 #include "IOpenXRExtensionPlugin.h"
 #include "Modules/ModuleManager.h"
 
